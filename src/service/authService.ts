@@ -1,8 +1,8 @@
-import Admin, { IAdmin } from "../../model/Admin";
-import { CustomError } from "../../error/CustomError";
+import Admin, { IAdmin } from "../model/Admin";
+import { CustomError } from "../error/CustomError";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { createAdminBody } from "../../types/requestTypes";
+import { createAdminBody } from "../types/auth/request";
 
 export const createAdmin = async (
   userData: createAdminBody
@@ -70,19 +70,19 @@ export const loginAdmin = async (credentials: {
     if (!username || !password)
       throw new CustomError(400, "Username and Password are required!");
 
-    const foundUser = await Admin.findOne({ username }).exec();
-    if (!foundUser)
+    const foundAdmin = await Admin.findOne({ username }).exec();
+    if (!foundAdmin)
       throw new CustomError(401, "Username or Password is incorrect.");
 
-    const match: boolean = await bcrypt.compare(password, foundUser.password);
+    const match: boolean = await bcrypt.compare(password, foundAdmin.password);
     if (match) {
-      const roles = Object.values(foundUser.roles);
+      const roles = Object.values(foundAdmin.roles);
 
       const accessToken = jwt.sign(
         {
           userInfo: {
-            _id: foundUser._id,
-            username: foundUser.username,
+            _id: foundAdmin._id,
+            username: foundAdmin.username,
             roles,
           },
         },
@@ -90,19 +90,19 @@ export const loginAdmin = async (credentials: {
         { expiresIn: "15m" }
       );
       const refreshToken = jwt.sign(
-        { username: foundUser.username },
+        { username: foundAdmin.username },
         process.env.REFRESH_TOKEN_SECRET as string,
         { expiresIn: "7d" }
       );
 
-      foundUser.refreshToken = refreshToken;
-      await foundUser.save();
+      foundAdmin.refreshToken = refreshToken;
+      await foundAdmin.save();
 
       return {
         userData: {
-          username: foundUser.username,
-          _id: foundUser._id,
-          roles: foundUser.roles,
+          username: foundAdmin.username,
+          _id: foundAdmin._id,
+          roles: foundAdmin.roles,
         },
         accessToken,
         refreshToken,
@@ -115,44 +115,60 @@ export const loginAdmin = async (credentials: {
   }
 };
 
-export const refreshTokenService = async (refreshToken: string) => {
+export const refreshTokenService = async (
+  refreshToken: string
+): Promise<{ userData: any; accessToken: string }> => {
   if (!refreshToken) {
     throw new CustomError(401, "Refresh token required");
   }
 
-  const foundUser = await Admin.findOne({ refreshToken });
-  if (!foundUser) {
+  const foundAdmin = await Admin.findOne({ refreshToken });
+  if (!foundAdmin) {
     throw new CustomError(403, "Invalid refresh token");
   }
 
-  return new Promise<{ userData: any; accessToken: string }>((resolve, reject) => {
-    jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET as string,
-      (err, decoded: any) => {
-        if (err || decoded.username !== foundUser.username) {
-          return reject(new CustomError(403, 'Invalid refresh token'));
-        }
+  return new Promise<{ userData: any; accessToken: string }>(
+    (resolve, reject) => {
+      jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET as string,
+        (err, decoded: any) => {
+          if (err || decoded.username !== foundAdmin.username) {
+            return reject(new CustomError(403, "Invalid refresh token"));
+          }
 
-        const roles = Object.values(foundUser.roles);
-        const accessToken = jwt.sign(
-          {
-            userInfo: {
-              username: foundUser.username,
-              roles,
+          const roles = Object.values(foundAdmin.roles);
+          const accessToken = jwt.sign(
+            {
+              userInfo: {
+                username: foundAdmin.username,
+                roles,
+              },
             },
-          },
-          process.env.ACCESS_TOKEN_SECRET as string,
-          { expiresIn: '15m' }
-        );
+            process.env.ACCESS_TOKEN_SECRET as string,
+            { expiresIn: "15m" }
+          );
 
-        resolve({
-          userData: {
-            username: foundUser.username,
-          },
-          accessToken: accessToken,
-        });
-      }
-    );
-  });
+          resolve({
+            userData: {
+              _id: foundAdmin._id,
+              username: foundAdmin.username,
+            },
+            accessToken: accessToken,
+          });
+        }
+      );
+    }
+  );
+};
+
+export const logoutAdmin = async (refreshToken: string) => {
+  const foundAdmin = await Admin.findOne({ refreshToken }).exec();
+
+  if(foundAdmin) {
+    foundAdmin.refreshToken = '';
+    await foundAdmin.save();
+  }
+
+  return foundAdmin;
 };

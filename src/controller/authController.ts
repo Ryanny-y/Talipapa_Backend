@@ -1,23 +1,27 @@
-import * as authService from "../../service/v1/authService";
+import * as authService from "../service/authService";
 import { Request, Response } from "express";
-import { createAdminBody } from "../../types/requestTypes";
-import { IAdmin } from "../../model/Admin";
-import { handleError } from "../../utils/errorResponseHandler";
+import { createAdminBody } from "../types/auth/request";
+import { IAdmin } from "../model/Admin";
+import { handleError } from "../utils/errorResponseHandler";
+import { createAdminResponse } from "../types/auth/response";
+import { ErrorResponse } from "../types";
 
 export const createAdmin = async (
   request: Request<{}, {}, createAdminBody>,
-  response: Response
+  response: Response<createAdminResponse | ErrorResponse>
 ) => {
   try {
     const admin: IAdmin = await authService.createAdmin(request.body);
-    return response.status(201).json({
+    const responseData: createAdminResponse = {
       message: `New Admin ${admin.username} Created Successfully`,
       admin: {
         username: admin.username,
         email: admin.email,
         roles: admin.roles,
       },
-    });
+    }
+
+    return response.status(201).json(responseData);
   } catch (error) {
     handleError(error, response);
   }
@@ -32,7 +36,7 @@ export const loginAdmin = async (request: Request<{}, {}, { username: string, pa
     response.cookie('refreshToken', loginResult.refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 1 day
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
       sameSite: 'strict',
     });
 
@@ -52,7 +56,6 @@ export const loginAdmin = async (request: Request<{}, {}, { username: string, pa
 export const refreshToken = async (request: Request, response: Response) => {
   try {
     const cookies = request.cookies;
-    console.log(cookies);
     
     const refreshTokenFromCookie = cookies?.refreshToken;
 
@@ -66,3 +69,36 @@ export const refreshToken = async (request: Request, response: Response) => {
     handleError(error, response);
   }
 }
+
+export const logoutAdmin = async (request: Request, response: Response) => {
+  try {
+    const cookies = request.cookies;
+
+    if(!cookies?.refreshToken) return response.sendStatus(204);
+    const refreshTokenFromCookie = cookies?.refreshToken;
+
+    const admin = await authService.logoutAdmin(refreshTokenFromCookie);
+
+
+    if(!admin) {
+      response.clearCookie("refreshToken", {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+      return response.sendStatus(204);
+    }
+
+    response.clearCookie("refreshToken", {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    response.sendStatus(204);
+  } catch (error) {
+    handleError(error, response);
+  }
+};

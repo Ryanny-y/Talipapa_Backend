@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { createAdmin, loginAdmin, refreshToken } from "../controller/v1/authController";
+import { createAdmin, loginAdmin, refreshToken } from "../controller/authController";
 
 const router: Router = express.Router();
 
