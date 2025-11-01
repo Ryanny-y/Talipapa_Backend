@@ -17,3 +17,8 @@ export interface LoginAdminResponse {
   userData: AdminResponse;
   accessToken: string;
 }
+
+export interface RefreshTokenResponse {
+  userData: AdminResponse,
+  accessToken: string
+}

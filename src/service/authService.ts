@@ -3,7 +3,7 @@ import { CustomError } from "../error/CustomError";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AdminLoginBody, CreateAdminBody } from "../types/auth/request";
-import { LoginAdminResponse } from "../types/auth/response";
+import { LoginAdminResponse, RefreshTokenResponse } from "../types/auth/response";
 
 export const createAdmin = async (
   userData: CreateAdminBody
@@ -118,7 +118,7 @@ export const loginAdmin = async (
 
 export const refreshTokenService = async (
   refreshToken: string
-): Promise<{ userData: any; accessToken: string }> => {
+): Promise<RefreshTokenResponse> => {
   if (!refreshToken) {
     throw new CustomError(401, "Refresh token required");
   }
@@ -128,7 +128,7 @@ export const refreshTokenService = async (
     throw new CustomError(403, "Invalid refresh token");
   }
 
-  return new Promise<{ userData: any; accessToken: string }>(
+  return new Promise<RefreshTokenResponse>(
     (resolve, reject) => {
       jwt.verify(
         refreshToken,
@@ -152,8 +152,10 @@ export const refreshTokenService = async (
 
           resolve({
             userData: {
-              _id: foundAdmin._id,
+              _id: foundAdmin._id.toString(),
               username: foundAdmin.username,
+              email: foundAdmin.email,
+              roles: foundAdmin.roles,
             },
             accessToken: accessToken,
           });

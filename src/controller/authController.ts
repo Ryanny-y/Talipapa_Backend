@@ -3,7 +3,11 @@ import { Request, Response } from "express";
 import { AdminLoginBody, CreateAdminBody } from "../types/auth/request";
 import { IAdmin } from "../model/Admin";
 import { handleError } from "../utils/errorResponseHandler";
-import { CreateAdminResponse, LoginAdminResponse } from "../types/auth/response";
+import {
+  CreateAdminResponse,
+  LoginAdminResponse,
+  RefreshTokenResponse,
+} from "../types/auth/response";
 import { ErrorResponse } from "../types";
 
 export const createAdmin = async (
@@ -51,7 +55,7 @@ export const loginAdmin = async (
         roles: loginResult.userData.roles,
       },
       accessToken: loginResult.accessToken,
-    }
+    };
 
     response.json(responseData);
   } catch (error) {
@@ -59,7 +63,10 @@ export const loginAdmin = async (
   }
 };
 
-export const refreshToken = async (request: Request, response: Response) => {
+export const refreshToken = async (
+  request: Request,
+  response: Response<RefreshTokenResponse | ErrorResponse>
+) => {
   try {
     const cookies = request.cookies;
 
@@ -90,7 +97,6 @@ export const logoutAdmin = async (request: Request, response: Response) => {
     if (!admin) {
       response.clearCookie("refreshToken", {
         httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
       });
@@ -99,7 +105,6 @@ export const logoutAdmin = async (request: Request, response: Response) => {
 
     response.clearCookie("refreshToken", {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     });
