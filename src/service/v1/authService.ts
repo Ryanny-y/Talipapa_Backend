@@ -1,6 +1,7 @@
 import Admin, { IAdmin } from "../../model/Admin";
 import { CustomError } from "../../error/CustomError";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { createAdminBody } from "../../types/requestTypes";
 
 export const createAdmin = async (
@@ -51,12 +52,65 @@ export const createAdmin = async (
 
     return newAdmin;
   } catch (error: any) {
-    // If it's already a CustomError, re-throw it
     if (error instanceof CustomError) {
       throw error;
     }
-    
-    // For other errors, throw as CustomError
+
     throw new CustomError(500, error.message || "Internal Server Error");
+  }
+};
+
+export const loginAdmin = async (credentials: {
+  username: string;
+  password: string;
+}) => {
+  const { username, password } = credentials;
+
+  try {
+    if (!username || !password)
+      throw new CustomError(400, "Username and Password are required!");
+
+    const foundUser = await Admin.findOne({ username }).exec();
+    if (!foundUser)
+      throw new CustomError(401, "Username or Password is incorrect.");
+
+    const match: boolean = await bcrypt.compare(password, foundUser.password);
+    if (match) {
+      const roles = Object.values(foundUser.roles);
+
+      const accessToken = jwt.sign(
+        {
+          userInfo: {
+            _id: foundUser._id,
+            username: foundUser.username,
+            roles,
+          },
+        },
+        process.env.ACCESS_TOKEN_SECRET as string,
+        { expiresIn: "15m" }
+      );
+      const refreshToken = jwt.sign(
+        { username: foundUser.username },
+        process.env.REFRESH_TOKEN_SECRET as string,
+        { expiresIn: "7d" }
+      );
+
+      foundUser.refreshToken = refreshToken;
+      await foundUser.save();
+
+      return {
+        userData: {
+          username: foundUser.username,
+          _id: foundUser._id,
+          roles: foundUser.roles,
+        },
+        accessToken,
+        refreshToken,
+      };
+    } else {
+      throw new CustomError(401, "Username or Password is incorrect.");
+    }
+  } catch (error) {
+    throw error;
   }
 };
