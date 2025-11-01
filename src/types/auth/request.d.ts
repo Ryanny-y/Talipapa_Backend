@@ -1,7 +1,12 @@
-export interface createAdminBody {
-  username: string,
-  email: string
-  contactNumber: string 
+export interface AdminLoginBody {
+  username: string;
+  password: string;
+}
+
+export interface CreateAdminBody {
+  username: string;
+  email: string;
+  contactNumber: string; 
   roles: string[];
-  password: string
+  password: string;
 }

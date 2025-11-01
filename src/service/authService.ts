@@ -2,10 +2,11 @@ import Admin, { IAdmin } from "../model/Admin";
 import { CustomError } from "../error/CustomError";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { createAdminBody } from "../types/auth/request";
+import { AdminLoginBody, CreateAdminBody } from "../types/auth/request";
+import { LoginAdminResponse } from "../types/auth/response";
 
 export const createAdmin = async (
-  userData: createAdminBody
+  userData: CreateAdminBody
 ): Promise<IAdmin> => {
   try {
     const { username, email, contactNumber, roles, password } = userData;
@@ -60,10 +61,9 @@ export const createAdmin = async (
   }
 };
 
-export const loginAdmin = async (credentials: {
-  username: string;
-  password: string;
-}) => {
+export const loginAdmin = async (
+  credentials: AdminLoginBody
+): Promise<LoginAdminResponse & { refreshToken: string }> => {
   const { username, password } = credentials;
 
   try {
@@ -100,8 +100,9 @@ export const loginAdmin = async (credentials: {
 
       return {
         userData: {
+          _id: foundAdmin._id.toString(),
           username: foundAdmin.username,
-          _id: foundAdmin._id,
+          email: foundAdmin.email,
           roles: foundAdmin.roles,
         },
         accessToken,
@@ -165,8 +166,8 @@ export const refreshTokenService = async (
 export const logoutAdmin = async (refreshToken: string) => {
   const foundAdmin = await Admin.findOne({ refreshToken }).exec();
 
-  if(foundAdmin) {
-    foundAdmin.refreshToken = '';
+  if (foundAdmin) {
+    foundAdmin.refreshToken = "";
     await foundAdmin.save();
   }
 

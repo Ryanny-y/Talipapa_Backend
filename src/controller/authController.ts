@@ -1,25 +1,25 @@
 import * as authService from "../service/authService";
 import { Request, Response } from "express";
-import { createAdminBody } from "../types/auth/request";
+import { AdminLoginBody, CreateAdminBody } from "../types/auth/request";
 import { IAdmin } from "../model/Admin";
 import { handleError } from "../utils/errorResponseHandler";
-import { createAdminResponse } from "../types/auth/response";
+import { CreateAdminResponse, LoginAdminResponse } from "../types/auth/response";
 import { ErrorResponse } from "../types";
 
 export const createAdmin = async (
-  request: Request<{}, {}, createAdminBody>,
-  response: Response<createAdminResponse | ErrorResponse>
+  request: Request<{}, {}, CreateAdminBody>,
+  response: Response<CreateAdminResponse | ErrorResponse>
 ) => {
   try {
     const admin: IAdmin = await authService.createAdmin(request.body);
-    const responseData: createAdminResponse = {
+    const responseData: CreateAdminResponse = {
       message: `New Admin ${admin.username} Created Successfully`,
       admin: {
         username: admin.username,
         email: admin.email,
         roles: admin.roles,
       },
-    }
+    };
 
     return response.status(201).json(responseData);
   } catch (error) {
@@ -27,60 +27,67 @@ export const createAdmin = async (
   }
 };
 
-export const loginAdmin = async (request: Request<{}, {}, { username: string, password: string }>, response: Response) => {
+export const loginAdmin = async (
+  request: Request<{}, {}, AdminLoginBody>,
+  response: Response<LoginAdminResponse | ErrorResponse>
+) => {
   try {
     const loginResult = await authService.loginAdmin(request.body);
 
-    if(!loginResult) return;
-    
-    response.cookie('refreshToken', loginResult.refreshToken, {
+    if (!loginResult) return;
+
+    response.cookie("refreshToken", loginResult.refreshToken, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      maxAge: 24 * 60 * 60 * 1000,
       secure: process.env.NODE_ENV === "production",
-      sameSite: 'strict',
+      sameSite: "strict",
     });
 
-    response.json({
+    const responseData: LoginAdminResponse = {
       userData: {
-        username: loginResult.userData.username,
         _id: loginResult.userData._id,
+        username: loginResult.userData.username,
+        email: loginResult.userData.email,
         roles: loginResult.userData.roles,
       },
       accessToken: loginResult.accessToken,
-    });
+    }
+
+    response.json(responseData);
   } catch (error) {
     handleError(error, response);
   }
-}
+};
 
 export const refreshToken = async (request: Request, response: Response) => {
   try {
     const cookies = request.cookies;
-    
+
     const refreshTokenFromCookie = cookies?.refreshToken;
 
-    if(!refreshTokenFromCookie) {
+    if (!refreshTokenFromCookie) {
       return response.sendStatus(401);
     }
 
-    const result = await authService.refreshTokenService(refreshTokenFromCookie);
+    const result = await authService.refreshTokenService(
+      refreshTokenFromCookie
+    );
     return response.json(result);
   } catch (error) {
     handleError(error, response);
   }
-}
+};
 
 export const logoutAdmin = async (request: Request, response: Response) => {
   try {
     const cookies = request.cookies;
 
-    if(!cookies?.refreshToken) return response.sendStatus(204);
+    if (!cookies?.refreshToken) return response.sendStatus(204);
     const refreshTokenFromCookie = cookies?.refreshToken;
 
     const admin = await authService.logoutAdmin(refreshTokenFromCookie);
 
-
-    if(!admin) {
+    if (!admin) {
       response.clearCookie("refreshToken", {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
