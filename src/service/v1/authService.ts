@@ -114,3 +114,45 @@ export const loginAdmin = async (credentials: {
     throw error;
   }
 };
+
+export const refreshTokenService = async (refreshToken: string) => {
+  if (!refreshToken) {
+    throw new CustomError(401, "Refresh token required");
+  }
+
+  const foundUser = await Admin.findOne({ refreshToken });
+  if (!foundUser) {
+    throw new CustomError(403, "Invalid refresh token");
+  }
+
+  return new Promise<{ userData: any; accessToken: string }>((resolve, reject) => {
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET as string,
+      (err, decoded: any) => {
+        if (err || decoded.username !== foundUser.username) {
+          return reject(new CustomError(403, 'Invalid refresh token'));
+        }
+
+        const roles = Object.values(foundUser.roles);
+        const accessToken = jwt.sign(
+          {
+            userInfo: {
+              username: foundUser.username,
+              roles,
+            },
+          },
+          process.env.ACCESS_TOKEN_SECRET as string,
+          { expiresIn: '15m' }
+        );
+
+        resolve({
+          userData: {
+            username: foundUser.username,
+          },
+          accessToken: accessToken,
+        });
+      }
+    );
+  });
+};

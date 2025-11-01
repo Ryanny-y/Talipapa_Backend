@@ -48,3 +48,21 @@ export const loginAdmin = async (request: Request<{}, {}, { username: string, pa
     handleError(error, response);
   }
 }
+
+export const refreshToken = async (request: Request, response: Response) => {
+  try {
+    const cookies = request.cookies;
+    console.log(cookies);
+    
+    const refreshTokenFromCookie = cookies?.refreshToken;
+
+    if(!refreshTokenFromCookie) {
+      return response.sendStatus(401);
+    }
+
+    const result = await authService.refreshTokenService(refreshTokenFromCookie);
+    return response.json(result);
+  } catch (error) {
+    handleError(error, response);
+  }
+}

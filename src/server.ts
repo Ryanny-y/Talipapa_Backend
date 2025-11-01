@@ -6,6 +6,7 @@ import express, { type Application } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import cookieParser from 'cookie-parser'
 
 // Imports
 import dbConn from './config/dbConn';
@@ -24,6 +25,7 @@ dotenv.config();
 dbConn();
 
 // Middle wares
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
