@@ -9,3 +9,4 @@ export interface NewsResponse {
 export type PaginatedNewsResponse = PaginatedResponse<INews>;
 export type CreateNewsResponse = NewsResponse;
 export type UpdateNewsResponse = NewsResponse;
+export type DeleteNewsResponse = { message : string };

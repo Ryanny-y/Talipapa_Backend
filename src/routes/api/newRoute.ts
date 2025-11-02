@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { createNews, getPaginatedNews, updateNews } from '../../controller/api/newsController';
+import { createNews, deleteNews, getPaginatedNews, updateNews } from '../../controller/api/newsController';
 
 const router: Router = express.Router();
 
@@ -9,6 +9,6 @@ router.route("")
 
 router.route("/:id")
   .put(updateNews)
-  // .delete();
+  .delete(deleteNews);
 
 export default router;
