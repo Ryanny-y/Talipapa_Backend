@@ -1,7 +1,7 @@
 import { Roles } from "../../model/Admin";
 
 export interface AdminResponse {
-  _id?: string | undefined;
+  _id: string;
   username: string;
   contactNumber?: string;
   email?: email;

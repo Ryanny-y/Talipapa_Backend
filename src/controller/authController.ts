@@ -19,6 +19,7 @@ export const createAdmin = async (
     const responseData: CreateAdminResponse = {
       message: `New Admin ${admin.username} Created Successfully`,
       admin: {
+        _id: admin._id.toString(),
         username: admin.username,
         email: admin.email,
         roles: admin.roles,
