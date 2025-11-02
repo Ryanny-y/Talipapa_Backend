@@ -1,12 +1,15 @@
 import mongoose, { Document, Schema } from "mongoose";
 
+export type NewsPriority = "LOW" | "MEDIUM" | "HIGH"
+
 export interface INews extends Document {
+  _id: string;
   title: string;
   description: string;
   dateTime: Date;
   location: string;
   category: string;
-  priority: string;
+  priority: NewsPriority;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -34,6 +37,7 @@ const newsSchema = new Schema<INews>({
   },
   priority: {
     type: String,
+    enum: ["LOW", "MEDIUM", "HIGH"],
     required: false,
   },
 }, { timestamps: true});

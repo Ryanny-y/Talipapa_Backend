@@ -5,12 +5,12 @@ import { ErrorResponse } from "../types";
 export const handleError = (error: unknown, response: Response<ErrorResponse>): void => {
   let statusCode = 500;
   let message = 'Internal Server Error';
-  let errorName = 'ServerError';
+  let errorName = 'Server Error';
 
   if (error instanceof CustomError) {
     statusCode = error.statusCode;
     message = error.message;
-    errorName = error.name;
+    errorName = "Custom Error";
   } else if(error instanceof Error) {
     message = error.message;
     errorName = error.name;

@@ -1,11 +1,11 @@
 import express, { Router } from 'express';
-import { getPaginatedNews } from '../../controller/api/newsController';
+import { createNews, getPaginatedNews } from '../../controller/api/newsController';
 
 const router: Router = express.Router();
 
 router.route("")
   .get(getPaginatedNews)
-  // .post()
+  .post(createNews)
 
 // router.route("/:id")
   // .put()

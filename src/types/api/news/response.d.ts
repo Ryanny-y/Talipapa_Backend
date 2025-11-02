@@ -1,3 +1,5 @@
+import { INews } from "../../../model/News";
+
 interface PaginatedResponse<T> {
   page: number;
   limit: number;
@@ -8,4 +10,9 @@ interface PaginatedResponse<T> {
   hasPreviousPage: boolean,
   nextPage: number | null;
   prevPage: number | null;
+}
+
+export interface CreateNewsResponse {
+  message: string;
+  data: INews
 }
