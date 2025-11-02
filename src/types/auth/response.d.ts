@@ -14,11 +14,11 @@ export interface CreateAdminResponse {
 }
 
 export interface LoginAdminResponse {
-  userData: AdminResponse;
+  adminData: AdminResponse;
   accessToken: string;
 }
 
 export interface RefreshTokenResponse {
-  userData: AdminResponse,
+  adminData: AdminResponse,
   accessToken: string
 }

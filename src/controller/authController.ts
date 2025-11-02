@@ -49,11 +49,11 @@ export const loginAdmin = async (
     });
 
     const responseData: LoginAdminResponse = {
-      userData: {
-        _id: loginResult.userData._id,
-        username: loginResult.userData.username,
-        email: loginResult.userData.email,
-        roles: loginResult.userData.roles,
+      adminData: {
+        _id: loginResult.adminData._id,
+        username: loginResult.adminData.username,
+        email: loginResult.adminData.email,
+        roles: loginResult.adminData.roles,
       },
       accessToken: loginResult.accessToken,
     };
@@ -77,9 +77,7 @@ export const refreshToken = async (
       return response.sendStatus(401);
     }
 
-    const result = await authService.refreshTokenService(
-      refreshTokenFromCookie
-    );
+    const result = await authService.refreshTokenService(refreshTokenFromCookie);
     return response.json(result);
   } catch (error) {
     handleError(error, response);

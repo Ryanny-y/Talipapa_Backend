@@ -80,7 +80,7 @@ export const loginAdmin = async (
 
       const accessToken = jwt.sign(
         {
-          userInfo: {
+          adminInfo: {
             _id: foundAdmin._id,
             username: foundAdmin.username,
             roles,
@@ -99,7 +99,7 @@ export const loginAdmin = async (
       await foundAdmin.save();
 
       return {
-        userData: {
+        adminData: {
           _id: foundAdmin._id.toString(),
           username: foundAdmin.username,
           email: foundAdmin.email,
@@ -141,7 +141,8 @@ export const refreshTokenService = async (
           const roles = Object.values(foundAdmin.roles);
           const accessToken = jwt.sign(
             {
-              userInfo: {
+              adminInfo: {
+                _id: foundAdmin._id,
                 username: foundAdmin.username,
                 roles,
               },
@@ -151,7 +152,7 @@ export const refreshTokenService = async (
           );
 
           resolve({
-            userData: {
+            adminData: {
               _id: foundAdmin._id.toString(),
               username: foundAdmin.username,
               email: foundAdmin.email,
