@@ -1,18 +1,11 @@
+import { PaginatedResponse } from "../../index";
 import { INews } from "../../../model/News";
 
-interface PaginatedResponse<T> {
-  page: number;
-  limit: number;
-  data: T[],
-  totalItems: number,
-  totalPages: number,
-  hasNextPage: boolean,
-  hasPreviousPage: boolean,
-  nextPage: number | null;
-  prevPage: number | null;
+export interface NewsResponse {
+  message: string;
+  data: INews;
 }
 
-export interface CreateNewsResponse {
-  message: string;
-  data: INews
-}
+export type PaginatedNewsResponse = PaginatedResponse<INews>;
+export type CreateNewsResponse = NewsResponse;
+export type UpdateNewsResponse = NewsResponse;

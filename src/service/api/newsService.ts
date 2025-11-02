@@ -1,9 +1,10 @@
+import mongoose from "mongoose";
 import { CustomError } from "../../error/CustomError";
 import News, { INews } from "../../model/News";
-import { CreateNewsRequest } from "../../types/api/news/request";
-import { PaginatedResponse } from "../../types/api/news/response";
+import { CreateNewsRequest, UpdateNewsRequest } from "../../types/api/news/request";
+import { PaginatedNewsResponse } from "../../types/api/news/response";
 
-export const getPaginatedNews = async (page: number, limit: number) : Promise<PaginatedResponse<INews>> => {
+export const getPaginatedNews = async (page: number, limit: number) : Promise<PaginatedNewsResponse> => {
   const skip = (page - 1) * limit;
 
   const totalItems: number = await News.countDocuments();
@@ -30,6 +31,9 @@ export const createNews = async (newsDetails: CreateNewsRequest) : Promise<INews
       throw new CustomError(400, "All Fields Are Required!");
     }
 
+    const existingNews = await News.findOne({ title });
+    if(existingNews) throw new CustomError(409, `News already exists with Title: ${title}`);
+
     const priorities = ["LOW", "MEDIUM", "HIGH"];
     if(!priorities.includes(priority)) {
       throw new CustomError(400, 'Invallid Priority! Should be: LOW, MEDIUM or HIGH only!')
@@ -45,6 +49,43 @@ export const createNews = async (newsDetails: CreateNewsRequest) : Promise<INews
     });
 
     return createdNews;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const updateNews = async (id: string, newsDetails: UpdateNewsRequest ) : Promise<INews> => {
+  try {
+    const { title } = newsDetails;
+
+    if(!mongoose.Types.ObjectId.isValid(id)) {
+      throw new CustomError(400, "Invalid News ID!");
+    }
+
+    const existingNews = await News.findById(id);
+    if(!existingNews) {
+      throw new CustomError(404, `News not found with ID: ${id}`);
+    }
+
+    if(title && title !== existingNews.title) {
+      const existingName = await News.findOne({
+        title,
+        id: { $ne: id }
+      });
+      if(existingName) throw new CustomError(409, `News already exists with Title: ${title}`);
+    }
+
+    const updatedNews = await News.findByIdAndUpdate(
+      id,
+      newsDetails,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedNews) {
+      throw new CustomError(404, `News not found after update (ID: ${id})`);
+    }
+    
+    return updatedNews;
   } catch (error) {
     throw error;
   }

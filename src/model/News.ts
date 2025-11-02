@@ -18,6 +18,7 @@ const newsSchema = new Schema<INews>({
   title: {
     type: String,
     required: true,
+    index: true
   },
   description: {
     type: String,

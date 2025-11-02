@@ -3,7 +3,7 @@ export interface NewsQuery {
   limit?: number
 }
 
-export interface CreateNewsRequest {
+export interface NewsPayload {
   title: string;
   description: string;
   dateTime: Date,
@@ -11,3 +11,6 @@ export interface CreateNewsRequest {
   category: string;
   priority: string;
 }
+
+export type CreateNewsRequest = NewsPayload;
+export type UpdateNewsRequest = Partial<NewsPayload>
