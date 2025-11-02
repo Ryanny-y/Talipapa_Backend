@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import { handleError } from '../../utils/errorResponseHandler';
 import { ErrorResponse } from '../../types';
 import { CreateNewsRequest, NewsQuery, UpdateNewsRequest } from '../../types/api/news/request';
-import { CreateNewsResponse, PaginatedNewsResponse, UpdateNewsResponse } from '../../types/api/news/response';
+import { CreateNewsResponse, DeleteNewsResponse, PaginatedNewsResponse, UpdateNewsResponse } from '../../types/api/news/response';
 import { CustomError } from '../../error/CustomError';
 
 export const getPaginatedNews = async (request: Request<{}, {}, {}, NewsQuery>, response: Response<PaginatedNewsResponse | ErrorResponse>) => {
@@ -36,9 +36,8 @@ export const createNews = async (request: Request<{}, {}, CreateNewsRequest>, re
 export const updateNews = async (request: Request<{ id: string }, {}, UpdateNewsRequest >, response: Response<UpdateNewsResponse | ErrorResponse>) => {
   try {
     const { id } = request.params;
-    if(!id) {
-      throw new CustomError(400, "ID is required to update news!");
-    }
+    if(!id) throw new CustomError(400, "ID is required to update news!");
+
     const updatedNews: INews = await newsService.updateNews(id, request.body);
     const responsePayload: UpdateNewsResponse = {
       message: `News ${updatedNews.title} Updated`,
@@ -46,6 +45,18 @@ export const updateNews = async (request: Request<{ id: string }, {}, UpdateNews
     }
 
     return response.json(responsePayload);
+  } catch (error) {
+    handleError(error, response);
+  }
+}
+
+export const deleteNews = async (request: Request<{ id: string }>, response: Response<DeleteNewsResponse | ErrorResponse>) => {
+  try {
+    const { id } = request.params;
+    if(!id) throw new CustomError(400, "ID is required to delete news!");
+    
+    const deletedNews: INews = await newsService.deleteNews(id);
+    response.json({ message: `News "${deletedNews.title}" deleted successfully!`});
   } catch (error) {
     handleError(error, response);
   }
