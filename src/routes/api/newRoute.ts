@@ -5,7 +5,7 @@ import verifyJwt from '../../middleware/verifyJwt';
 const router: Router = express.Router();
 
 router.route("")
-  .get(verifyJwt, getPaginatedNews)
+  .get(getPaginatedNews)
   .post(verifyJwt, createNews)
 
 router.route("/:id")

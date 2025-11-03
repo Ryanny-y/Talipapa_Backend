@@ -2,7 +2,7 @@
 import path from 'path';
 
 // Package Modules
-import express, { type Application } from 'express';
+import express, { Request, Response, type Application } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -68,6 +68,13 @@ app.use("/api/v1/news", newsRoute);
 // app.use("/farm-inventory", require("./routes/api/farmInventoryRoute"));
 
 // app.use('/establishment', require('./routes/api/establishmentRoute'));
+
+app.use((request: Request, response: Response) => {
+  response.status(404).json({
+    status: `Error`,
+    message: `Cannot find ${request.originalUrl} on this server!`
+  })
+});
 
 mongoose.connection.once("open", () => {
   console.log("Connected to DB!");
