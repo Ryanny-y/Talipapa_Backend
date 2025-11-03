@@ -23,3 +23,11 @@ export interface ErrorResponse {
   timestamp?: string,
   details?: any
 }
+
+export interface ImageInterface {
+  url: string,
+  key: string,
+  originalName: string,
+  size: Number,
+  mimetype: string,
+}
