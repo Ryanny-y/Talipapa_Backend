@@ -8,6 +8,8 @@ export interface ICarousel {
   link?: string;
   order: number;
   image: ImageInterface;
+  createdAt: string;
+  updatedAt: string
 }
 
 export interface IPageContent {
@@ -19,6 +21,8 @@ export interface IPageContent {
   barangayDescription: string;
   barangayLogo: ImageInterface;
   carousel: ICarousel[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 const carouselSchema = new Schema<ICarousel>({
@@ -39,7 +43,7 @@ const carouselSchema = new Schema<ICarousel>({
     size: Number,
     mimetype: String,
   },
-});
+}, { timestamps: true });
 
 const pageContentSchema = new Schema<IPageContent>({
   mission: {
@@ -73,7 +77,7 @@ const pageContentSchema = new Schema<IPageContent>({
     type: [carouselSchema],
     default: [],
   },
-});
+}, { timestamps: true });
 
 const PageContent = mongoose.model<IPageContent>("PageContent", pageContentSchema);
 

@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
-export type Roles = 'ADMIN' | 'SUPER_ADMIN';
+export type Roles = "ADMIN" | "SUPER_ADMIN";
 
 export interface IAdmin extends Document {
   _id: Types.ObjectId;
@@ -9,7 +9,7 @@ export interface IAdmin extends Document {
   contactNumber: string;
   roles: Roles[];
   password: string;
-  refreshToken: String,
+  refreshToken: String;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,7 +31,7 @@ const adminSchema = new Schema<IAdmin>(
     roles: {
       type: [String],
       enum: ["ADMIN", "SUPER_ADMIN"],
-      required: true
+      required: true,
     },
     password: {
       type: String,
@@ -40,18 +40,17 @@ const adminSchema = new Schema<IAdmin>(
     refreshToken: String,
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
-)
+);
 
-
-adminSchema.pre<IAdmin>('save', function (next) {
-  if(this.roles.includes("SUPER_ADMIN") && !this.roles.includes("ADMIN")) {
+adminSchema.pre<IAdmin>("save", function (next) {
+  if (this.roles.includes("SUPER_ADMIN") && !this.roles.includes("ADMIN")) {
     this.roles.push("ADMIN");
   }
-  
+
   next();
-})
+});
 
 const Admin = mongoose.model<IAdmin>("Admin", adminSchema);
 

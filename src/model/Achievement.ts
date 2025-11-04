@@ -7,8 +7,8 @@ export interface IAchievement extends Document {
   description: string;
   link: string;
   image: ImageInterface;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 const achievementSchema = new Schema<IAchievement>(
