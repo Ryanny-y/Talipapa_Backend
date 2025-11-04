@@ -106,3 +106,15 @@ export const updateMaterial = async (id: string, materialDetails: UpdateMaterial
 
   return updatedMaterial;
 }
+
+export const deleteMaterial = async (id: string): Promise<IMaterial> => {
+  if(!mongoose.Types.ObjectId.isValid(id)) throw new CustomError(400, `Product ID: ${id} is invalid.`);
+  const deletedMaterial: IMaterial | null = await Material.findByIdAndDelete(id);
+  if (!deletedMaterial) throw new CustomError(404, `News not found with ID: ${id}.)`);
+
+  if(deletedMaterial.image?.key) {
+    await deleteFromS3(deletedMaterial.image.key);
+  }
+
+  return deletedMaterial;
+}

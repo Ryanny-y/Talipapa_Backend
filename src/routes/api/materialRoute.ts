@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { createMaterial, getPaginatedMaterials, updateMaterial } from '../../controller/api/materialController';
+import { createMaterial, deleteMaterial, getPaginatedMaterials, updateMaterial } from '../../controller/api/materialController';
 import verifyJwt from '../../middleware/verifyJwt';
 import verifyRoles from '../../middleware/verifyRoles';
 import { Roles } from '../../config/roles';
@@ -14,5 +14,6 @@ router.route("")
 router.route("/:id")
   .all(verifyJwt, verifyRoles(Roles.SUPER_ADMIN))
   .patch(upload.single("materialImage"), updateMaterial)
+  .delete(deleteMaterial)
 
 export default router;

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as materialService from '../../service/api/materialService'
 import { handleError } from "../../utils/errorResponseHandler"
 import { ErrorResponse, PaginationRequestQuery } from "../../types";
-import { CreateMaterialResponse, PaginatedMaterialResponse, UpdateMaterialResponse } from "../../types/api/material/response";
+import { CreateMaterialResponse, DeleteMaterialResponse, PaginatedMaterialResponse, UpdateMaterialResponse } from "../../types/api/material/response";
 import { IMaterial } from "../../model/Material";
 import { CreateMaterialRequest, UpdateMaterialRequest } from "../../types/api/material/request";
 
@@ -44,6 +44,17 @@ export const updateMaterial = async (request: Request<{ id: string }, {}, Update
     };
 
     response.json(payloadResponse)
+  } catch (error) {
+    handleError(error, response);
+  }
+}
+
+export const deleteMaterial = async (request: Request<{ id: string }>, response: Response<DeleteMaterialResponse | ErrorResponse>) => {
+  try {
+    const { id } = request.params;
+    const deletedProduct: IMaterial = await materialService.deleteMaterial(id);
+    
+    response.json({ message: `Material ${deletedProduct.name} deleted successfully!`})
   } catch (error) {
     handleError(error, response);
   }

@@ -9,3 +9,4 @@ interface MaterialResponse {
 export type PaginatedMaterialResponse = PaginatedResponse<IMaterial>;
 export type CreateMaterialResponse = MaterialResponse;
 export type UpdateMaterialResponse = MaterialResponse;
+export type DeleteMaterialResponse = { message: string };
