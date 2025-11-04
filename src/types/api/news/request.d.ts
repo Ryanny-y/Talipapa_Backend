@@ -1,8 +1,3 @@
-export interface NewsQuery {
-  page?: number,
-  limit?: number
-}
-
 export interface NewsPayload {
   title: string;
   description: string;

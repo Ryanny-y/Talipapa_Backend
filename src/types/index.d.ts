@@ -3,6 +3,11 @@ export enum Roles {
   SUPER_ADMIN = "SUPER_ADMIN"
 }
 
+export interface PaginationRequestQuery {
+  page?: string;
+  limit?: string
+}
+
 export interface PaginatedResponse<T> {
   page: number;
   limit: number;
@@ -21,7 +26,6 @@ export interface ErrorResponse {
   message: string,
   statusCode: number,
   timestamp?: string,
-  details?: any
 }
 
 export interface ImageInterface {

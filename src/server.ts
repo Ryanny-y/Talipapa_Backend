@@ -19,6 +19,7 @@ import corsOptions from './config/corsOptions';
 import authRoute from './routes/authRoute';
 import newsRoute from './routes/api/newRoute';
 import pageContentRoute from './routes/api/pageContentRoute';
+import achievementRoute from './routes/api/achievementRoute';
 
 const app: Application = express();
 const port = 5050;
@@ -43,7 +44,7 @@ app.use("/api/v1/news", newsRoute);
 
 app.use("/api/v1/pagecontent", pageContentRoute);
 
-// app.use("/achievements", require("./routes/api/achievementsRoute"));
+app.use("/api/v1/achievements", achievementRoute);
 
 // app.use("/products", require("./routes/api/productsRoute"));
 
