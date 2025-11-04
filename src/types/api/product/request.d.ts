@@ -8,3 +8,4 @@ interface ProductPayload {
 }
 
 export type CreateProductRequest = ProductPayload;
+export type UpdateProductRequest = Partial<ProductPayload>

@@ -8,3 +8,4 @@ interface ProductResponse {
 
 export type PaginatedProductResponse = PaginatedResponse<IProduct>;
 export type CreateProductResponse = ProductResponse;
+export type UpdateProductResponse = ProductResponse;

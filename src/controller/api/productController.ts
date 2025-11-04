@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import * as productService from '../../service/api/productService';
 import { handleError } from "../../utils/errorResponseHandler";
 import { ErrorResponse, PaginationRequestQuery } from "../../types";
-import { CreateProductResponse, PaginatedProductResponse } from "../../types/api/product/response";
-import { CreateProductRequest } from "../../types/api/product/request";
+import { CreateProductResponse, PaginatedProductResponse, UpdateProductResponse } from "../../types/api/product/response";
+import { CreateProductRequest, UpdateProductRequest } from "../../types/api/product/request";
 import { IProduct } from "../../model/Products";
 
 export const getPaginatedProducts = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedProductResponse | ErrorResponse>) => {
@@ -34,3 +34,17 @@ export const createProduct = async (request: Request<{}, {}, CreateProductReques
   }
 }
 
+export const updateProduct = async (request: Request<{ id: string }, {}, UpdateProductRequest>, response: Response<UpdateProductResponse | ErrorResponse>) => {
+  try {
+    const { id } = request.params;
+    const productImage = request.file;
+    const updatedProduct: IProduct = await productService.updateProduct(id, request.body, productImage);
+    const payloadResponse: UpdateProductResponse = {
+      message: `Product ${updatedProduct.name} updated successfully!`,
+      data: updatedProduct
+    }
+    response.json(payloadResponse);
+  } catch (error) {
+    handleError(error, response);
+  }
+}

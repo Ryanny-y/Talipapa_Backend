@@ -123,7 +123,7 @@ export const deleteNews = async (id: string): Promise<INews> => {
   }
 
   const deletedNews = await News.findByIdAndDelete(id);
-  if (!deletedNews) throw new CustomError(404, `News not found (ID: ${id})`);
+  if (!deletedNews) throw new CustomError(500, `Unexpected error: News update failed for ID ${id}.)`);
 
   return deletedNews;
 };

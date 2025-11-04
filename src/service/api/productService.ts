@@ -1,8 +1,10 @@
+import mongoose from "mongoose";
 import { CustomError } from "../../error/CustomError";
 import Product, { IProduct } from "../../model/Products";
-import { ProductPayload } from "../../types/api/product/request";
+import { CreateProductRequest, ProductPayload, UpdateProductRequest } from "../../types/api/product/request";
 import { PaginatedProductResponse } from "../../types/api/product/response";
 import { MulterS3File } from "../../types/express";
+import deleteFromS3 from "../../utils/deleteFromS3";
 
 export const getPaginatedProducts = async (page: number, limit: number): Promise<PaginatedProductResponse> => {
   const skip = (page - 1) * limit;
@@ -28,7 +30,7 @@ export const getPaginatedProducts = async (page: number, limit: number): Promise
   }
 };
 
-export const createProduct = async (productDetails: ProductPayload, productImage: MulterS3File | undefined): Promise<IProduct> => {
+export const createProduct = async (productDetails: CreateProductRequest, productImage: MulterS3File | undefined): Promise<IProduct> => {
   const { name, description, category, subCategory, stocks, requiredPoints } = productDetails
 
   if (!name || !description || !category || !subCategory || !requiredPoints) throw new CustomError(400, "All Fields are Required!");
@@ -63,3 +65,66 @@ export const createProduct = async (productDetails: ProductPayload, productImage
   return newProduct;
 }
 
+export const updateProduct = async (id: string, productDetails: UpdateProductRequest, productImage: MulterS3File | undefined ): Promise<IProduct> => {
+  if(!mongoose.Types.ObjectId.isValid(id)) throw new CustomError(400, `Product ID: ${id} is invalid.`);
+
+  const existingProduct = await Product.findById(id);
+  if(!existingProduct) throw new CustomError(404, `Product with ID: ${id} not found.`);
+
+  const { name, description, category, subCategory, stocks, requiredPoints } = productDetails
+
+
+  if(name && name !== existingProduct.name) {
+    const existingName = await Product.findOne({
+      name,
+      _id: { $ne: id }
+    })
+    if(existingName) throw new CustomError(409, `Product with name ${name} already exists.`);
+  }
+
+  if(stocks !== undefined) {
+    if(isNaN(stocks) || stocks < 0 ) throw new CustomError(400, "Stocks must be a positive integer.");
+  }
+
+  if(requiredPoints !== undefined) {
+    if(isNaN(requiredPoints) || requiredPoints < 0 ) throw new CustomError(400, "Required Points must be a positive integer.");
+  }
+
+  if(category) {
+    const categories = ["Agricultural", "Non-Agricultural"];
+    const isValidCategory = categories.includes(category);
+    if(!isValidCategory) throw new CustomError(400, "Invalid Product Category. Must be Agricultural and Non-Agricultural only.");
+  }
+
+  const fieldsToUpdate: Record<string, any> = {};
+  if (name) fieldsToUpdate.name = name;
+  if (description) fieldsToUpdate.description = description;
+  if (category) fieldsToUpdate.category = category;
+  if (subCategory) fieldsToUpdate.subCategory = subCategory;
+  if (stocks !== undefined) fieldsToUpdate.stocks = stocks;
+  if (requiredPoints !== undefined) fieldsToUpdate.requiredPoints = requiredPoints;
+
+  if(productImage) {
+    if(existingProduct.image && existingProduct.image.key) {
+      await deleteFromS3(existingProduct.image.key);
+    }
+
+    fieldsToUpdate.image = {
+      url: productImage.location,
+      key: productImage.key,
+      originalName: productImage.originalname,
+      size: productImage.size,
+      mimetype: productImage.mimetype
+    }
+  };
+
+  const updatedProduct = await Product.findByIdAndUpdate(
+    id,
+    { $set: fieldsToUpdate },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedProduct) throw new CustomError(500, `Unexpected error: Product update failed for ID ${id}.`);
+
+  return updatedProduct;
+} 

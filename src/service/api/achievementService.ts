@@ -101,7 +101,7 @@ export const updateAchievement = async (id: string, achievementDetails: UpdateAc
   }
   
   const updatedAchievement: IAchievement | null = await Achievement.findByIdAndUpdate(id, { $set: fieldsToUpdate }, { new: true, runValidators: true });
-  if(!updatedAchievement) throw new CustomError(404, `Achievement not found after update (ID: ${id})`);
+  if(!updatedAchievement) throw new CustomError(500, `Unexpected error: Achievement update failed for ID ${id}.`);
 
   return updatedAchievement;
 }

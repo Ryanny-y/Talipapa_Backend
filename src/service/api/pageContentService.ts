@@ -86,7 +86,7 @@ export const updatePageContent = async (id: string, pageContentDetails: UpdatePa
   }
 
   const updatedPageContent: IPageContent | null = await PageContent.findByIdAndUpdate(id, { $set: fieldsToUpdate }, { new: true, runValidators: true });
-  if(!updatedPageContent) throw new CustomError(404, `Page Content not found after updating (ID: ${id})`);
+  if(!updatedPageContent) throw new CustomError(500, `Unexpected error: Page Content update failed for ID ${id}.`);
 
   return updatedPageContent;
 }
