@@ -1,9 +1,11 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 // Core Modulse
 import path from 'path';
 
 // Package Modules
 import express, { Request, Response, type Application } from 'express';
-import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import cookieParser from 'cookie-parser'
@@ -21,8 +23,6 @@ import pageContentRoute from './routes/api/pageContentRoute';
 const app: Application = express();
 const port = 5050;
 
-dotenv.config();
-
 // load database
 dbConn();
 
@@ -35,7 +35,6 @@ app.use(cors(corsOptions));
 
 // Auth endpoint
 app.use("/api/v1/auth", authRoute);
-
 
 // Endpoints
 // app.use('/users', require('./routes/api/userRoute'));

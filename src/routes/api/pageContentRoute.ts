@@ -1,11 +1,13 @@
 import express, { Router } from 'express';
-import { getPageContent } from '../../controller/api/pageContentController';
+import { createPageContent, getPageContent } from '../../controller/api/pageContentController';
+import verifyJwt from '../../middleware/verifyJwt';
+import upload from '../../middleware/upload';
 
 const router: Router = express.Router();
 
 router.route("")
   .get(getPageContent)
-//   .post()
+  .post(verifyJwt, upload.single("barangayLogo"), createPageContent)
 // router.patch("/:id");
 
 

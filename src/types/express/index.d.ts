@@ -1,9 +1,13 @@
-import "express";
+// types/express/index.ts
+import 'express';
+import type { File as MulterFile } from 'multer';
 
-declare module "express-serve-static-core" {
-  interface Request {
-    adminId?: string;
-    adminUsername?: string;
-    roles?: string[];
+declare global {
+  namespace Express {
+    interface Request {
+      adminId?: string;
+      adminUsername?: string;
+      roles?: string[];
+    }
   }
 }
