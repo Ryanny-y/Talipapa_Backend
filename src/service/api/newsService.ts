@@ -51,14 +51,31 @@ export const updateNews = async (id: string, newsDetails: UpdateNewsRequest): Pr
     throw new CustomError(404, `News not found with ID: ${id}`);
   }
 
-  if (newsDetails.title && newsDetails.title !== existingNews.title) {
-    const existingName = await News.findOne({ title: newsDetails.title, _id: { $ne: id } });
-    if (existingName) throw new CustomError(409, `News already exists with Title: ${newsDetails.title}`);
+  const { title, description, dateTime, location, category, priority } = newsDetails;
+
+  if (title && title !== existingNews.title) {
+    const existingTitle = await News.findOne({
+      title: title,
+      _id: { $ne: id },
+    });
+
+    if (existingTitle) {
+      throw new CustomError(409, `News already exists with Title: ${title}`);
+    }
   }
+
+  const fieldsToUpdate: Record<string, any> = {};
+
+  if (title) fieldsToUpdate.title = title;
+  if (description) fieldsToUpdate.description = description;
+  if (dateTime) fieldsToUpdate.dateTime = dateTime;
+  if (location) fieldsToUpdate.location = location;
+  if (category) fieldsToUpdate.category = category;
+  if (priority) fieldsToUpdate.priority = priority;
 
   const updatedNews = await News.findByIdAndUpdate(
     id,
-    newsDetails,
+    { $set: fieldsToUpdate },
     { new: true, runValidators: true }
   );
 
