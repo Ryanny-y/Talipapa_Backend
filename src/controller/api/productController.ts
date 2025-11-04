@@ -6,6 +6,7 @@ import { CreateProductResponse, DeleteProductResponse, PaginatedProductResponse,
 import { CreateProductRequest, UpdateProductRequest } from "../../types/api/product/request";
 import { IProduct } from "../../model/Products";
 import deleteFromS3 from "../../utils/deleteFromS3";
+import { MulterS3File } from "../../types/express";
 
 export const getPaginatedProducts = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedProductResponse | ErrorResponse>) => {
   try {
@@ -22,7 +23,7 @@ export const getPaginatedProducts = async (request: Request<{}, {}, {}, Paginati
 
 export const createProduct = async (request: Request<{}, {}, CreateProductRequest>, response: Response<CreateProductResponse | ErrorResponse>) => {
   try {
-    const productImage = request.file;
+    const productImage = request.file as MulterS3File | undefined;
     const createdProduct: IProduct = await productService.createProduct(request.body, productImage);
     const responsePayload: CreateProductResponse = {
       message: `Product ${createdProduct.name} created successfully!`,
@@ -38,7 +39,7 @@ export const createProduct = async (request: Request<{}, {}, CreateProductReques
 export const updateProduct = async (request: Request<{ id: string }, {}, UpdateProductRequest>, response: Response<UpdateProductResponse | ErrorResponse>) => {
   try {
     const { id } = request.params;
-    const productImage = request.file;
+    const productImage = request.file as MulterS3File | undefined;
     const updatedProduct: IProduct = await productService.updateProduct(id, request.body, productImage);
     const payloadResponse: UpdateProductResponse = {
       message: `Product ${updatedProduct.name} updated successfully!`,

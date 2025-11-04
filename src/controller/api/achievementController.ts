@@ -5,6 +5,7 @@ import { handleError } from '../../utils/errorResponseHandler';
 import { CreateAchievementResponse, DeleteAchievementResponse, PaginatedAchievementResponse, UpdateAchievementResponse } from '../../types/api/achievement/response';
 import { CreateAchievementRequest, UpdateAchievementRequest } from '../../types/api/achievement/request';
 import { IAchievement } from '../../model/Achievement';
+import { MulterS3File } from '../../types/express';
 
 export const getPaginatedAchievements = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedAchievementResponse | ErrorResponse>) => {
   try {
@@ -20,7 +21,7 @@ export const getPaginatedAchievements = async (request: Request<{}, {}, {}, Pagi
 
 export const createAchievement = async (request: Request<{}, {}, CreateAchievementRequest>, response: Response<CreateAchievementResponse | ErrorResponse>) => {
   try {
-    const imageFile = request.file;
+    const imageFile = request.file as MulterS3File | undefined;
     const createdAchievement = await achievementService.createAchievement(request.body, imageFile);
     const responsePayload: CreateAchievementResponse = {
       message: `Achievement ${createdAchievement.title}`,
@@ -36,7 +37,7 @@ export const createAchievement = async (request: Request<{}, {}, CreateAchieveme
 export const updateAchievement = async (request: Request<{ id: string }, {}, UpdateAchievementRequest>, response: Response<UpdateAchievementResponse | ErrorResponse>) => {
   try {
     const { id } = request.params;
-    const imageFile = request.file;
+    const imageFile = request.file as MulterS3File | undefined;
     const updatedAchievement = await achievementService.updateAchievement(id, request.body, imageFile);
     const responsePayload: UpdateAchievementResponse = {
       message: `Achievement Updated Successfully`,

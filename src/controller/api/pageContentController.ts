@@ -5,6 +5,7 @@ import { IPageContent } from "../../model/PageContent";
 import { ErrorResponse } from "../../types";
 import { CreatePageContentResponse, updatePageContentResponse } from "../../types/api/pageContent/response";
 import { CreatePageContentRequest, UpdatePageContentRequest } from "../../types/api/pageContent/request";
+import { MulterS3File } from "../../types/express";
 
 export const getPageContent = async (request: Request, response: Response<IPageContent | ErrorResponse>) => {
   try {
@@ -17,7 +18,7 @@ export const getPageContent = async (request: Request, response: Response<IPageC
 
 export const createPageContent = async (request: Request<{}, {}, CreatePageContentRequest>, response: Response<CreatePageContentResponse | ErrorResponse>) => {
   try {
-    const imageFile = request.file;
+    const imageFile = request.file as MulterS3File | undefined;
     const createdPageContent = await pageContentService.createPageContent(request.body, imageFile);
     const responsePayload: CreatePageContentResponse = {
       message: `Page Content Created Successfully!`,
@@ -32,7 +33,7 @@ export const createPageContent = async (request: Request<{}, {}, CreatePageConte
 export const updatePageContent = async (request: Request<{ id: string }, {}, UpdatePageContentRequest>, response: Response<updatePageContentResponse | ErrorResponse>) => {
   try {
     const { id } = request.params;
-    const imageFile = request.file;
+    const imageFile = request.file as MulterS3File | undefined;
     const updatePageContent = await pageContentService.updatePageContent(id, request.body, imageFile);
     const responsePayload: updatePageContentResponse = {
       message: 'Page content updated successfully',

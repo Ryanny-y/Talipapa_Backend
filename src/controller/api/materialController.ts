@@ -5,6 +5,7 @@ import { ErrorResponse, PaginationRequestQuery } from "../../types";
 import { CreateMaterialResponse, PaginatedMaterialResponse } from "../../types/api/material/response";
 import { IMaterial } from "../../model/Material";
 import { CreateMaterialRequest } from "../../types/api/material/request";
+import { MulterS3File } from "../../types/express";
 
 export const getPaginatedMaterials = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedMaterialResponse | ErrorResponse>) => {
   try {
@@ -20,7 +21,7 @@ export const getPaginatedMaterials = async (request: Request<{}, {}, {}, Paginat
 
 export const createMaterial = async (request: Request<{}, {}, CreateMaterialRequest>, response: Response<CreateMaterialResponse | ErrorResponse>) => {
   try {
-    const materialImage = request.file;
+    const materialImage = request.file as MulterS3File | undefined;
     const createdMaterial: IMaterial = await materialService.createMaterial(request.body, materialImage);
     const responsePayload: CreateMaterialResponse = {
       message: `Material ${createdMaterial.name} created successfully.`,
