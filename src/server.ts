@@ -20,6 +20,7 @@ import authRoute from './routes/authRoute';
 import newsRoute from './routes/api/newRoute';
 import pageContentRoute from './routes/api/pageContentRoute';
 import achievementRoute from './routes/api/achievementRoute';
+import productRoute from './routes/api/productRoute';
 
 const app: Application = express();
 const port = 5050;
@@ -46,7 +47,7 @@ app.use("/api/v1/pagecontent", pageContentRoute);
 
 app.use("/api/v1/achievements", achievementRoute);
 
-// app.use("/products", require("./routes/api/productsRoute"));
+app.use("/api/v1/products", productRoute);
 
 // app.use("/materials", require("./routes/api/materialsRoute"));
 
