@@ -8,8 +8,8 @@ import { CreatePageContentRequest } from "../../types/api/pageContent/request";
 
 export const getPageContent = async (request: Request, response: Response<IPageContent | ErrorResponse>) => {
   try {
-    const pageContent = await pageContentService.getPageContent();;
-    return pageContent;
+    const pageContent = await pageContentService.getPageContent();
+    response.json(pageContent);
   } catch (error) {
     handleError(error, response);    
   }

@@ -1,6 +1,9 @@
-// types/express/index.ts
 import 'express';
-import type { File as MulterFile } from 'multer';
+
+export interface MulterS3File extends Express.Multer.File {
+  location: string;
+  key: string
+}
 
 declare global {
   namespace Express {
@@ -8,6 +11,8 @@ declare global {
       adminId?: string;
       adminUsername?: string;
       roles?: string[];
+      file?: MulterS3File
     }
   }
 }
+
