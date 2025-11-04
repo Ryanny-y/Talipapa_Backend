@@ -53,7 +53,6 @@ export const updateNews = async (request: Request<{ id: string }, {}, UpdateNews
 export const deleteNews = async (request: Request<{ id: string }>, response: Response<DeleteNewsResponse | ErrorResponse>) => {
   try {
     const { id } = request.params;
-    if(!id) throw new CustomError(400, "ID is required to delete news!");
     
     const deletedNews: INews = await newsService.deleteNews(id);
     response.json({ message: `News "${deletedNews.title}" deleted successfully!`});

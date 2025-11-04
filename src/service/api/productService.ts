@@ -127,4 +127,16 @@ export const updateProduct = async (id: string, productDetails: UpdateProductReq
   if (!updatedProduct) throw new CustomError(500, `Unexpected error: Product update failed for ID ${id}.`);
 
   return updatedProduct;
-} 
+}
+
+export const deleteProduct = async (id: string): Promise<IProduct> => {
+  if(!mongoose.Types.ObjectId.isValid(id)) throw new CustomError(400, `Product ID: ${id} is invalid.`);
+  const deletedProduct: IProduct | null = await Product.findByIdAndDelete(id);
+  if (!deletedProduct) throw new CustomError(404, `News not found with ID: ${id}.)`);
+
+  if(deletedProduct.image?.key) {
+    await deleteFromS3(deletedProduct.image.key);
+  }
+
+  return deletedProduct;
+}

@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import verifyJwt from '../../middleware/verifyJwt';
 import verifyRoles from '../../middleware/verifyRoles';
 import { Roles } from '../../config/roles';
-import { createProduct, getPaginatedProducts, updateProduct } from '../../controller/api/productController';
+import { createProduct, deleteProduct, getPaginatedProducts, updateProduct } from '../../controller/api/productController';
 import upload from '../../middleware/upload';
 
 const router: Router = express.Router();
@@ -14,6 +14,6 @@ router.route("/")
 router.route("/:id")
   .all(verifyJwt, verifyRoles(Roles.SUPER_ADMIN))
   .patch(upload.single("productImage"), updateProduct)
-  // .delete()
+  .delete(deleteProduct)
 
 export default router;

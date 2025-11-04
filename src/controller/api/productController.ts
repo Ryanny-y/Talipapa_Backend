@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import * as productService from '../../service/api/productService';
 import { handleError } from "../../utils/errorResponseHandler";
 import { ErrorResponse, PaginationRequestQuery } from "../../types";
-import { CreateProductResponse, PaginatedProductResponse, UpdateProductResponse } from "../../types/api/product/response";
+import { CreateProductResponse, DeleteProductResponse, PaginatedProductResponse, UpdateProductResponse } from "../../types/api/product/response";
 import { CreateProductRequest, UpdateProductRequest } from "../../types/api/product/request";
 import { IProduct } from "../../model/Products";
+import deleteFromS3 from "../../utils/deleteFromS3";
 
 export const getPaginatedProducts = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedProductResponse | ErrorResponse>) => {
   try {
@@ -44,6 +45,17 @@ export const updateProduct = async (request: Request<{ id: string }, {}, UpdateP
       data: updatedProduct
     }
     response.json(payloadResponse);
+  } catch (error) {
+    handleError(error, response);
+  }
+}
+
+export const deleteProduct = async (request: Request<{ id: string }>, response: Response<DeleteProductResponse | ErrorResponse>) => {
+  try {
+    const { id } = request.params;
+    const deletedProduct: IProduct = await productService.deleteProduct(id);
+    
+    response.json({ message: `Product ${deletedProduct.name} deleted successfully!`})
   } catch (error) {
     handleError(error, response);
   }

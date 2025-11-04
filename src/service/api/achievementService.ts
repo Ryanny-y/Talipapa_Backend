@@ -109,7 +109,7 @@ export const updateAchievement = async (id: string, achievementDetails: UpdateAc
 export const deleteAchievement = async (id: string): Promise<IAchievement> => {
   if(!mongoose.Types.ObjectId.isValid(id)) throw new CustomError(400, `Achievement ID: ${id} is invalid`);
   const deletedAchievement: IAchievement | null = await Achievement.findByIdAndDelete(id);
-  if (!deletedAchievement) throw new CustomError(404, `Achievement not found (ID: ${id})`);
+  if (!deletedAchievement) throw new CustomError(404, `Achievement not found with ID: ${id}`);
 
   if(deletedAchievement.image?.key) {
     await deleteFromS3(deletedAchievement.image.key);
