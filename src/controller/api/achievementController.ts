@@ -5,7 +5,6 @@ import { handleError } from '../../utils/errorResponseHandler';
 import { CreateAchievementResponse, DeleteAchievementResponse, PaginatedAchievementResponse, UpdateAchievementResponse } from '../../types/api/achievement/response';
 import { CreateAchievementRequest, UpdateAchievementRequest } from '../../types/api/achievement/request';
 import { IAchievement } from '../../model/Achievement';
-import deleteFromS3 from '../../utils/deleteFromS3';
 
 export const getPaginatedAchievements = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedAchievementResponse | ErrorResponse>) => {
   try {
