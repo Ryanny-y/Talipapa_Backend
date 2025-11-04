@@ -23,7 +23,7 @@ export const getPaginatedProducts = async (request: Request<{}, {}, {}, Paginati
 
 export const createProduct = async (request: Request<{}, {}, CreateProductRequest>, response: Response<CreateProductResponse | ErrorResponse>) => {
   try {
-    const productImage = request.file as MulterS3File | undefined;
+    const productImage = request.file
     const createdProduct: IProduct = await productService.createProduct(request.body, productImage);
     const responsePayload: CreateProductResponse = {
       message: `Product ${createdProduct.name} created successfully!`,
@@ -39,7 +39,7 @@ export const createProduct = async (request: Request<{}, {}, CreateProductReques
 export const updateProduct = async (request: Request<{ id: string }, {}, UpdateProductRequest>, response: Response<UpdateProductResponse | ErrorResponse>) => {
   try {
     const { id } = request.params;
-    const productImage = request.file as MulterS3File | undefined;
+    const productImage = request.file
     const updatedProduct: IProduct = await productService.updateProduct(id, request.body, productImage);
     const payloadResponse: UpdateProductResponse = {
       message: `Product ${updatedProduct.name} updated successfully!`,

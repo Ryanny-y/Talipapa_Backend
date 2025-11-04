@@ -21,7 +21,7 @@ export const getPaginatedMaterials = async (request: Request<{}, {}, {}, Paginat
 
 export const createMaterial = async (request: Request<{}, {}, CreateMaterialRequest>, response: Response<CreateMaterialResponse | ErrorResponse>) => {
   try {
-    const materialImage = request.file as MulterS3File | undefined;
+    const materialImage = request.file;
     const createdMaterial: IMaterial = await materialService.createMaterial(request.body, materialImage);
     const responsePayload: CreateMaterialResponse = {
       message: `Material ${createdMaterial.name} created successfully.`,

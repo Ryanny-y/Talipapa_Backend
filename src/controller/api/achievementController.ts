@@ -21,7 +21,7 @@ export const getPaginatedAchievements = async (request: Request<{}, {}, {}, Pagi
 
 export const createAchievement = async (request: Request<{}, {}, CreateAchievementRequest>, response: Response<CreateAchievementResponse | ErrorResponse>) => {
   try {
-    const imageFile = request.file as MulterS3File | undefined;
+    const imageFile = request.file;
     const createdAchievement = await achievementService.createAchievement(request.body, imageFile);
     const responsePayload: CreateAchievementResponse = {
       message: `Achievement ${createdAchievement.title}`,
@@ -37,7 +37,7 @@ export const createAchievement = async (request: Request<{}, {}, CreateAchieveme
 export const updateAchievement = async (request: Request<{ id: string }, {}, UpdateAchievementRequest>, response: Response<UpdateAchievementResponse | ErrorResponse>) => {
   try {
     const { id } = request.params;
-    const imageFile = request.file as MulterS3File | undefined;
+    const imageFile = request.file;
     const updatedAchievement = await achievementService.updateAchievement(id, request.body, imageFile);
     const responsePayload: UpdateAchievementResponse = {
       message: `Achievement Updated Successfully`,

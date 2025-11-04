@@ -1,5 +1,5 @@
 import "express";
-import type { File as MulterFile } from "multer";
+// import type { File as MulterFile } from "multer";
 
 export interface MulterS3File extends MulterFile {
   location: string;
