@@ -9,3 +9,4 @@ interface AchievementResponse {
 export type PaginatedAchievementResponse = PaginatedResponse<IAchievement>;
 export type CreateAchievementResponse = AchievementResponse;
 export type UpdateAchievementResponse = AchievementResponse;
+export type DeleteAchievementResponse = { message: string };

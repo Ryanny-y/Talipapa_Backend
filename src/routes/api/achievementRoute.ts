@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { createAchievement, getPaginatedAchievements, updateAchievement } from '../../controller/api/achievementController';
+import { createAchievement, deleteAchievement, getPaginatedAchievements, updateAchievement } from '../../controller/api/achievementController';
 import verifyJwt from '../../middleware/verifyJwt';
 import upload from '../../middleware/upload';
 import verifyRoles from '../../middleware/verifyRoles';
@@ -12,6 +12,7 @@ router.route("/")
 
 router.route("/:id")
   .all(verifyJwt, verifyRoles(Roles.SUPER_ADMIN))
-  .patch(upload.single("image"), updateAchievement);
+  .patch(upload.single("image"), updateAchievement)
+  .delete(deleteAchievement)
 
 export default router;

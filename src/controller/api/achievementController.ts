@@ -2,8 +2,10 @@ import * as achievementService from '../../service/api/achievementService';
 import { Request, Response } from "express";
 import { ErrorResponse, PaginationRequestQuery } from '../../types';
 import { handleError } from '../../utils/errorResponseHandler';
-import { CreateAchievementResponse, PaginatedAchievementResponse, UpdateAchievementResponse } from '../../types/api/achievement/response';
+import { CreateAchievementResponse, DeleteAchievementResponse, PaginatedAchievementResponse, UpdateAchievementResponse } from '../../types/api/achievement/response';
 import { CreateAchievementRequest, UpdateAchievementRequest } from '../../types/api/achievement/request';
+import { IAchievement } from '../../model/Achievement';
+import deleteFromS3 from '../../utils/deleteFromS3';
 
 export const getPaginatedAchievements = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedAchievementResponse | ErrorResponse>) => {
   try {
@@ -42,6 +44,17 @@ export const updateAchievement = async (request: Request<{ id: string }, {}, Upd
       data: updatedAchievement
     }
     response.json(responsePayload);
+  } catch (error) {
+    handleError(error, response);
+  }
+}
+
+export const deleteAchievement = async (request: Request<{ id: string}>, response: Response<DeleteAchievementResponse | ErrorResponse>) => {
+  try {
+    const { id } = request.params;
+    const deletedAchievement: IAchievement = await achievementService.deleteAchievement(id);
+  
+    response.json({ message: `Achievement ${deletedAchievement.title} deleted successfully!`});
   } catch (error) {
     handleError(error, response);
   }
