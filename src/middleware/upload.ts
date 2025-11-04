@@ -18,7 +18,7 @@ const upload = multer({
     s3: s3Bucket,
     bucket: process.env.AWS_BUCKET_NAME as string,
     acl: "public-read",
-    key(req, file, callback) {
+    key(req: Request, file: Express.Multer.File, callback: (error: any, key?: string) => void) {
       const fileName = `${Date.now()}-${Math.round(Math.random() * 1E9)}-${file.originalname}`;
       callback(null, `uploads/${fileName}`);
     },
