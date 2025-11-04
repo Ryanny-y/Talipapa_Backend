@@ -1,8 +1,3 @@
-export enum Roles {
-  ADMIN = "ADMIN",
-  SUPER_ADMIN = "SUPER_ADMIN"
-}
-
 export interface PaginationRequestQuery {
   page?: string;
   limit?: string
