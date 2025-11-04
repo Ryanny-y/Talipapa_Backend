@@ -6,3 +6,4 @@ interface PageContentResponse {
 }
 
 export type CreatePageContentResponse = PageContentResponse;
+export type updatePageContentResponse = PageContentResponse;

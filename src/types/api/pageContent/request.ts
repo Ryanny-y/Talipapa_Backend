@@ -7,3 +7,4 @@ interface PageContentPayload {
 }
 
 export type CreatePageContentRequest = PageContentPayload;
+export type UpdatePageContentRequest = Partial<PageContentPayload>;

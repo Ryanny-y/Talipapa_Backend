@@ -3,8 +3,8 @@ import { Request, Response } from "express";
 import { handleError } from "../../utils/errorResponseHandler";
 import { IPageContent } from "../../model/PageContent";
 import { ErrorResponse } from "../../types";
-import { CreatePageContentResponse } from "../../types/api/pageContent/response";
-import { CreatePageContentRequest } from "../../types/api/pageContent/request";
+import { CreatePageContentResponse, updatePageContentResponse } from "../../types/api/pageContent/response";
+import { CreatePageContentRequest, UpdatePageContentRequest } from "../../types/api/pageContent/request";
 
 export const getPageContent = async (request: Request, response: Response<IPageContent | ErrorResponse>) => {
   try {
@@ -24,6 +24,22 @@ export const createPageContent = async (request: Request<{}, {}, CreatePageConte
       data: createdPageContent
     }
     response.status(201).json(responsePayload);
+  } catch (error) {
+    handleError(error, response);
+  }
+}
+
+export const updatePageContent = async (request: Request<{ id: string }, {}, UpdatePageContentRequest>, response: Response<updatePageContentResponse | ErrorResponse>) => {
+  try {
+    const { id } = request.params;
+    const imageFile = request.file;
+    const updatePageContent = await pageContentService.updatePageContent(id, request.body, imageFile);
+    const responsePayload: updatePageContentResponse = {
+      message: 'Page content updated successfully',
+      data: updatePageContent 
+    }
+
+    response.json(responsePayload)
   } catch (error) {
     handleError(error, response);
   }
