@@ -73,7 +73,6 @@ export const updateProduct = async (id: string, productDetails: UpdateProductReq
 
   const { name, description, category, subCategory, stocks, requiredPoints } = productDetails
 
-
   if(name && name !== existingProduct.name) {
     const existingName = await Product.findOne({
       name,

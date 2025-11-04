@@ -6,3 +6,4 @@ export interface MaterialRequest {
 }
 
 export type CreateMaterialRequest = MaterialRequest;
+export type UpdateMaterialRequest = Partial<MaterialRequest>
