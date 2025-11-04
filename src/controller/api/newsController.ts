@@ -2,12 +2,12 @@ import { INews } from '../../model/News';
 import * as newsService from '../../service/api/newsService';
 import { Request, Response } from "express";
 import { handleError } from '../../utils/errorResponseHandler';
-import { ErrorResponse } from '../../types';
-import { CreateNewsRequest, NewsQuery, UpdateNewsRequest } from '../../types/api/news/request';
+import { ErrorResponse, PaginationRequestQuery } from '../../types';
+import { CreateNewsRequest, UpdateNewsRequest } from '../../types/api/news/request';
 import { CreateNewsResponse, DeleteNewsResponse, PaginatedNewsResponse, UpdateNewsResponse } from '../../types/api/news/response';
 import { CustomError } from '../../error/CustomError';
 
-export const getPaginatedNews = async (request: Request<{}, {}, {}, NewsQuery>, response: Response<PaginatedNewsResponse | ErrorResponse>) => {
+export const getPaginatedNews = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedNewsResponse | ErrorResponse>) => {
   try {
     const page = Number(request.query.page) || 1;
     const limit = Number(request.query.limit) || 10;
