@@ -2,8 +2,8 @@ import * as achievementService from '../../service/api/achievementService';
 import { Request, Response } from "express";
 import { ErrorResponse, PaginationRequestQuery } from '../../types';
 import { handleError } from '../../utils/errorResponseHandler';
-import { CreateAchievementResponse, PaginatedAchievementResponse } from '../../types/api/achievement/response';
-import { CreateAchievementRequest } from '../../types/api/achievement/request';
+import { CreateAchievementResponse, PaginatedAchievementResponse, UpdateAchievementResponse } from '../../types/api/achievement/response';
+import { CreateAchievementRequest, UpdateAchievementRequest } from '../../types/api/achievement/request';
 
 export const getPaginatedAchievements = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedAchievementResponse | ErrorResponse>) => {
   try {
@@ -31,3 +31,18 @@ export const createAchievement = async (request: Request<{}, {}, CreateAchieveme
     handleError(error, response);
   }
 };
+
+export const updateAchievement = async (request: Request<{ id: string }, {}, UpdateAchievementRequest>, response: Response<UpdateAchievementResponse | ErrorResponse>) => {
+  try {
+    const { id } = request.params;
+    const imageFile = request.file;
+    const updatedAchievement = await achievementService.updateAchievement(id, request.body, imageFile);
+    const responsePayload: UpdateAchievementResponse = {
+      message: `Achievement Updated Successfully`,
+      data: updatedAchievement
+    }
+    response.json(responsePayload);
+  } catch (error) {
+    handleError(error, response);
+  }
+}

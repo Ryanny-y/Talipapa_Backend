@@ -5,3 +5,4 @@ interface AchievementPayload {
 }
 
 export type CreateAchievementRequest = AchievementPayload;
+export type UpdateAchievementRequest = Partial<AchievementPayload>;
