@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 export interface IStep {
   stepNumber: number;
   title: string;
-  description: string;
+  description?: string;
   requiredDocuments: string[];
   estimatedTime?: string;
   tips: string[];
@@ -32,10 +32,7 @@ const stepSchema = new Schema<IStep>(
       type: String,
       required: true,
     },
-    description: {
-      type: String,
-      required: true,
-    },
+    description: String,
     requiredDocuments: {
       type: [String],
       default: [],

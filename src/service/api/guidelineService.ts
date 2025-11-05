@@ -95,6 +95,15 @@ export const updateGuideline = async (id: string, guidelineDetails: UpdateGuidel
   return updatedGuideline;
 }
 
+export const deleteGuideline = async (id: string): Promise<IGuideline> => {
+  if(!mongoose.Types.ObjectId.isValid(id)) throw new CustomError(400, `Achievement ID: ${id} is invalid`);
+
+  const deletedAchievement: IGuideline | null = await Guideline.findByIdAndDelete(id);
+  if (!deletedAchievement) throw new CustomError(404, `Achievement not found with ID: ${id}`);
+
+  return deletedAchievement;
+}
+
 function normalizeSteps(steps: StepPaylod[]) {
   return steps.map((s, idx) => ({
     stepNumber: s.stepNumber ?? idx + 1,

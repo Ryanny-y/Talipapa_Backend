@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as guidelineService from '../../service/api/guidelineService';
 import { ErrorResponse, PaginationRequestQuery } from "../../types";
 import { handleError } from "../../utils/errorResponseHandler";
-import { CreateGuidelineResponse, PaginatedGuidelineResponse, UpdateGuidelineResponse } from "../../types/api/guideline/response";
+import { CreateGuidelineResponse, DeleteGuidelineResponse, PaginatedGuidelineResponse, UpdateGuidelineResponse } from "../../types/api/guideline/response";
 import { CreateGuidelineRequest, UpdateGuidelineRequest } from "../../types/api/guideline/request";
 
 export const getPaginatedGuidelines = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedGuidelineResponse | ErrorResponse>) => {
@@ -41,6 +41,17 @@ export const updateGuideline = async (request: Request<{ id: string }, {}, Updat
     }
 
     response.json(responsePayload)
+  } catch (error) {
+    handleError(error, response);
+  }
+}
+
+export const deleteGuideline = async (request: Request<{ id: string}>, response: Response<DeleteGuidelineResponse | ErrorResponse>) => {
+  try {
+    const { id } = request.params;
+    const deletedAchievement = await guidelineService.deleteGuideline(id);
+  
+    response.json({ message: `Achievement ${deletedAchievement.title} deleted successfully!`});
   } catch (error) {
     handleError(error, response);
   }
