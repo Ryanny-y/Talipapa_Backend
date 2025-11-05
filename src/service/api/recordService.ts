@@ -4,11 +4,12 @@ import Record, { IRecord } from "../../model/Record";
 import { CreateRecordRequest, UpdateRecordRequest } from "../../types/api/record/request";
 import { PaginatedRecordResponse } from "../../types/api/record/response";
 
-export const getPaginatedRecords = async (page: number, limit: number): Promise<PaginatedRecordResponse> => {
+export const getPaginatedRecords = async (page: number, limit: number, residentStatus: string ): Promise<PaginatedRecordResponse> => {
   const skip = (page - 1) * limit;
+  const isResident = residentStatus === 'resident';
 
-  const totalItems = await Record.countDocuments();
-  const data = await Record.find()
+  const totalItems = await Record.countDocuments({ isResident });
+  const data = await Record.find({ isResident })
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
@@ -31,7 +32,7 @@ export const getPaginatedRecords = async (page: number, limit: number): Promise<
 export const createRecord = async (recordDetails: CreateRecordRequest): Promise<IRecord> => {
   const { firstName, lastName, middleName, suffix, age, gender, isResident, address, contactNumber } = recordDetails;
 
-  if (!firstName || !lastName || !middleName || !age || !gender) throw new CustomError(400, "All fields are required.");
+  if (!firstName || !lastName || !age || !gender) throw new CustomError(400, "All fields are required.");
   const existingRecord = await Record.findOne({
     firstName,
     lastName,

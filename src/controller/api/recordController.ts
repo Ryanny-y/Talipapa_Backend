@@ -7,14 +7,15 @@ import { CreateRecordRequest, SearchRecordQuery, UpdateRecordRequest } from '../
 import { IRecord } from '../../model/Record';
 
 export const getPaginatedRecords = async (
-  request: Request<{}, {}, {}, PaginationRequestQuery>, 
+  request: Request<{}, {}, {}, SearchRecordQuery>, 
   response: Response<PaginatedRecordResponse | ErrorResponse>
 ) => {
   try {
+    const { residentStatus = "resident" } = request.query;
     const page = Number(request.query.page) || 1;
     const limit = Number(request.query.limit) || 10;
 
-    const result = await recordService.getPaginatedRecords(page, limit);
+    const result = await recordService.getPaginatedRecords(page, limit, residentStatus);
     response.json(result);
   } catch (error) {
     handleError(error, response);

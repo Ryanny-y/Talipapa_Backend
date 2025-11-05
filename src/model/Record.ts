@@ -11,9 +11,9 @@ export interface IRecord extends Document {
   age: number;
   gender: string;
   isResident?: boolean;
+  contactNumber?: string;
   address?: string;
   points?: number;
-  contactNumber?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,13 +35,14 @@ const recordSchema = new Schema<IRecord>(
     },
     middleName: {
       type: String,
-      required: true,
+      default: "",
       index: true,
     },
     suffix: {
       type: String,
       default: '',
     },
+    birthDate: Date,
     age: {
       type: Number,
       required: true,
@@ -54,15 +55,15 @@ const recordSchema = new Schema<IRecord>(
       type: Boolean,
       default: true,
     },
+    contactNumber: {
+      type: String,
+    },
     address: {
       type: String,
     },
     points: {
       type: Number,
       default: 0,
-    },
-    contactNumber: {
-      type: String,
     },
   },
   { timestamps: true }
