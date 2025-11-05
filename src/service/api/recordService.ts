@@ -1,4 +1,7 @@
+import mongoose from "mongoose";
+import { CustomError } from "../../error/CustomError";
 import Record, { IRecord } from "../../model/Record";
+import { CreateRecordRequest } from "../../types/api/record/request";
 import { PaginatedRecordResponse } from "../../types/api/record/response";
 
 export const getPaginatedRecords = async (page: number, limit: number): Promise<PaginatedRecordResponse> => {
@@ -24,3 +27,80 @@ export const getPaginatedRecords = async (page: number, limit: number): Promise<
     prevPage: page > 1 ? page - 1 : null,
   }
 }
+
+  export const createRecord = async (recordDetails: CreateRecordRequest): Promise<IRecord> => {
+    const { firstName, lastName, middleName, suffix, age, gender, isResident, address, contact_number } = recordDetails;
+
+    if (!firstName || !lastName || !middleName || !age || !gender) throw new CustomError(400, "All fields are required.");
+    const existingRecord = await Record.findOne({
+      firstName: new RegExp(firstName, "i"),
+      lastName: new RegExp(lastName, "i"),
+    });
+    
+    if(existingRecord) throw new CustomError(409, `Record with name ${firstName} ${lastName} already exists.`);
+
+    if(isNaN(age) || age <= 0) throw new CustomError(400, 'Age must be a positive number');
+
+    if(contact_number?.length !== 11) throw new CustomError(400, 'Contact number must be 11 digits only.'); 
+
+    const newRecord = await Record.create({
+      firstName,
+      lastName,
+      middleName,
+      suffix,
+      age,
+      gender,
+      isResident,
+      address,
+      contact_number,
+    });
+
+    return newRecord;
+  }
+
+// export const updateRecord = async (
+//   id: string,
+//   recordDetails: Partial<CreateRecordRequest>
+// ): Promise<IRecord> => {
+//   if(!mongoose.Types.ObjectId.isValid(id)) throw new CustomError(400, `Product ID: ${id} is invalid.`);
+
+//   const existingRecord = await Record.findById(id);
+//   if (!existingRecord) throw new CustomError(404, `Record with ID: ${id} not found.`);
+
+//   const { firstName, lastName, middleName, suffix, age, gender, isResident, address, contact_number } = recordDetails;
+
+//   if (firstName && lastName) {
+//     const duplicate = await Record.findOne({
+//       firstName: new RegExp(`^${firstName}$`, "i"),
+//       lastName: new RegExp(`^${lastName}$`, "i"),
+//       _id: { $ne: id },
+//     });
+//     if (duplicate) throw new CustomError(409, `Record with name ${firstName} ${lastName} already exists.`);
+//   }
+
+//   if (age !== undefined) {
+//     if (isNaN(age) || age <= 0) throw new CustomError(400, "Age must be a positive number.");
+//   }
+
+//   const fieldsToUpdate: Record<string, any> = {};
+
+//   if (firstName) fieldsToUpdate.firstName = firstName;
+//   if (lastName) fieldsToUpdate.lastName = lastName;
+//   if (middleName) fieldsToUpdate.middleName = middleName;
+//   if (suffix !== undefined) fieldsToUpdate.suffix = suffix;
+//   if (age !== undefined) fieldsToUpdate.age = age;
+//   if (gender) fieldsToUpdate.gender = gender;
+//   if (isResident !== undefined) fieldsToUpdate.isResident = isResident;
+//   if (address !== undefined) fieldsToUpdate.address = address;
+//   if (contact_number !== undefined) fieldsToUpdate.contact_number = contact_number;
+
+//   const updatedRecord = await Record.findByIdAndUpdate(
+//     id,
+//     { $set: fieldsToUpdate },
+//     { new: true, runValidators: true }
+//   );
+
+//   if (!updatedRecord) throw new CustomError(500, `Unexpected error: Record update failed for ID ${id}.`);
+
+//   return updatedRecord;
+// };

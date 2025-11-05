@@ -7,7 +7,8 @@ export interface IRecord extends Document {
   lastName: string;
   middleName: string;
   suffix?: string;
-  age: string;
+  birthDate?: Date; 
+  age: number;
   gender: string;
   isResident?: boolean;
   address?: string;
@@ -39,7 +40,7 @@ const recordSchema = new Schema<IRecord>(
       default: '',
     },
     age: {
-      type: String,
+      type: Number,
       required: true,
     },
     gender: {

@@ -83,8 +83,8 @@ export const updateAchievement = async (id: string, achievementDetails: UpdateAc
 
   const fieldsToUpdate: Record<string, any> = {}; 
   if(title) fieldsToUpdate.title = title;
-  if(description) fieldsToUpdate.description = description;
-  if(link) fieldsToUpdate.link = link;
+  if(description !== undefined) fieldsToUpdate.description = description;
+  if(link !== undefined) fieldsToUpdate.link = link;
 
   if(image) {
     if(existingAchievement.image && existingAchievement.image.key) {
