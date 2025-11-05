@@ -4,6 +4,7 @@ interface PageContentPayload {
   barangayName: string;
   barangayHistory: string;
   barangayDescription: string;
+  youtubeVideoUrl: string;
 }
 
 export type CreatePageContentRequest = PageContentPayload;

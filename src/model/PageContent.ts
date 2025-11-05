@@ -21,6 +21,7 @@ export interface IPageContent {
   barangayDescription: string;
   barangayLogo: ImageInterface;
   carousel: ICarousel[];
+  youtubeVideoUrl: String
   createdAt: string;
   updatedAt: string;
 }
@@ -77,6 +78,7 @@ const pageContentSchema = new Schema<IPageContent>({
     type: [carouselSchema],
     default: [],
   },
+  youtubeVideoUrl: String
 }, { timestamps: true });
 
 const PageContent = mongoose.model<IPageContent>("PageContent", pageContentSchema);

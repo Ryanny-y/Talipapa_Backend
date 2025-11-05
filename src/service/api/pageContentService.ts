@@ -16,7 +16,7 @@ export const getPageContent = async (): Promise<IPageContent> => {
 }
 
 export const createPageContent = async (pageContentDetails: CreatePageContentRequest, barangayLogo: MulterS3File | undefined): Promise<IPageContent> => {
-  const { mission, vision, barangayName, barangayDescription, barangayHistory } = pageContentDetails;
+  const { mission, vision, barangayName, barangayDescription, barangayHistory, youtubeVideoUrl } = pageContentDetails;
 
   if(!mission || !vision || !barangayName || !barangayDescription || !barangayHistory) {
     throw new CustomError(400, "All fields are required!");
@@ -38,13 +38,14 @@ export const createPageContent = async (pageContentDetails: CreatePageContentReq
     barangayName,
     barangayDescription,
     barangayHistory,
+    youtubeVideoUrl,
     barangayLogo: {
       url: barangayLogo.location,
       key: barangayLogo.key,
       originalName: barangayLogo.originalname,
       size: barangayLogo.size,
       mimetype: barangayLogo.mimetype,
-    }
+    },
   });
 
   return createdPageContent;
@@ -61,7 +62,7 @@ export const updatePageContent = async (id: string, pageContentDetails: UpdatePa
     throw new CustomError(400, `Page Content not found with ID: ${id}`)
   }
 
-  const { mission, vision, barangayName, barangayDescription, barangayHistory } = pageContentDetails;
+  const { mission, vision, barangayName, barangayDescription, barangayHistory, youtubeVideoUrl } = pageContentDetails;
 
   const fieldsToUpdate: Record<string, any> = {};
 
@@ -70,6 +71,7 @@ export const updatePageContent = async (id: string, pageContentDetails: UpdatePa
   if (barangayName) fieldsToUpdate.barangayName = barangayName;
   if (barangayDescription) fieldsToUpdate.barangayDescription = barangayDescription;
   if (barangayHistory) fieldsToUpdate.barangayHistory = barangayHistory;
+  if (youtubeVideoUrl) fieldsToUpdate.youtubeVideoUrl = youtubeVideoUrl;
 
   if (barangayLogo) {
     if (existingPageContent.barangayLogo && existingPageContent.barangayLogo.key) {
