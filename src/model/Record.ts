@@ -13,7 +13,7 @@ export interface IRecord extends Document {
   isResident?: boolean;
   address?: string;
   points?: number;
-  contact_number?: string;
+  contactNumber?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -58,7 +58,7 @@ const recordSchema = new Schema<IRecord>(
       type: Number,
       default: 0,
     },
-    contact_number: {
+    contactNumber: {
       type: String,
     },
   },
@@ -87,6 +87,12 @@ recordSchema.pre<IRecord>('save', async function (next) {
     next();
   }
 });
+
+recordSchema.index(
+  { firstName: 1, lastName: 1 },
+  { collation: { locale: 'en', strength: 2 } }
+);
+
 
 const Record = mongoose.model<IRecord>('Record', recordSchema);
 

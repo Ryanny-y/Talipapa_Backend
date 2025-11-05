@@ -8,7 +8,7 @@ interface RecordPayload {
   gender: string;
   isResident?: boolean;
   address?: string;
-  contact_number?: string;
+  contactNumber?: string;
   points?: number;
 }
 

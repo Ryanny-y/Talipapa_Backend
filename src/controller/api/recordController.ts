@@ -1,7 +1,7 @@
 import * as recordService from '../../service/api/recordService';
 import { Request, Response } from "express";
 import { ErrorResponse, PaginationRequestQuery } from '../../types';
-import { CreateRecordResponse, PaginatedRecordResponse } from '../../types/api/record/response';
+import { CreateRecordResponse, PaginatedRecordResponse, UpdateRecordResponse } from '../../types/api/record/response';
 import { handleError } from '../../utils/errorResponseHandler';
 import { CreateRecordRequest, UpdateRecordRequest } from '../../types/api/record/request';
 import { IRecord } from '../../model/Record';
@@ -26,25 +26,26 @@ export const createRecord = async (request: Request<{}, {}, CreateRecordRequest>
       data: createdRecord
     }
     
-    response.json(recordPayload);
+    response.status(201).json(recordPayload);
   } catch (error) {
     handleError(error, response);
   }
 }
 
-// export const updateRecord = async (
-//   request: Request<{ id: string }, {}, UpdateRecordRequest>,
-//   response: Response<{ message: string; data: IRecord } | ErrorResponse>
-// ) => {
-//   try {
-//     const { id } = request.params;
-//     const updatedRecord = await recordService.updateRecord(id, request.body);
+export const updateRecord = async (
+  request: Request<{ id: string }, {}, UpdateRecordRequest>,
+  response: Response<UpdateRecordResponse | ErrorResponse>
+) => {
+  try {
+    const { id } = request.params;
+    const updatedRecord: IRecord = await recordService.updateRecord(id, request.body);
+    const responsePayload: UpdateRecordResponse = {
+      message: `Record ${updatedRecord.firstName} ${updatedRecord.lastName} updated successfully.`,
+      data: updatedRecord,
+    }
 
-//     response.json({
-//       message: `Record ${updatedRecord.firstName} ${updatedRecord.lastName} updated successfully.`,
-//       data: updatedRecord,
-//     });
-//   } catch (error) {
-//     handleError(error, response);
-//   }
-// };
+    response.json(responsePayload);
+  } catch (error) {
+    handleError(error, response);
+  }
+};
