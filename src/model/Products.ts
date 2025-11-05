@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { ImageInterface } from "../types";
 
-export interface IProduct {
+export interface IProduct extends Document {
   _id: string;
   name: string;
   description: string;

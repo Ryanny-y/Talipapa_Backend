@@ -14,7 +14,7 @@ export const getPaginatedProducts = async (page: number, limit: number): Promise
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
-    .lean();
+    .lean<IProduct[]>();
   const totalPages = Math.ceil(totalItems / limit);
   
   return {

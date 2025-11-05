@@ -22,6 +22,7 @@ import pageContentRoute from './routes/api/pageContentRoute';
 import achievementRoute from './routes/api/achievementRoute';
 import productRoute from './routes/api/productRoute';
 import materialRoute from './routes/api/materialRoute';
+import recordRoute from './routes/api/recordRoute';
 
 const app: Application = express();
 const port = 5050;
@@ -52,7 +53,7 @@ app.use("/api/v1/products", productRoute);
 
 app.use("/api/v1/materials", materialRoute);
 
-// app.use("/records", require("./routes/api/recordRoute"));
+app.use("/api/v1/records", recordRoute);
 
 // app.use("/guidelines", require("./routes/api/guidelinesRoute"));
 
