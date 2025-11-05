@@ -2,7 +2,7 @@ import express, { Router } from 'express'
 import verifyJwt from '../../middleware/verifyJwt';
 import verifyRoles from '../../middleware/verifyRoles';
 import { Roles } from '../../config/roles';
-import { createRecord, getPaginatedRecords } from '../../controller/api/recordController';
+import { createRecord, getPaginatedRecords, updateRecord } from '../../controller/api/recordController';
 
 const router: Router = express.Router();
 
@@ -10,5 +10,9 @@ router.route("/")
   .all(verifyJwt, verifyRoles(Roles.SUPER_ADMIN))
   .get(getPaginatedRecords)
   .post(createRecord)
+
+router.route("/:id")
+  .all(verifyJwt, verifyRoles(Roles.SUPER_ADMIN))
+  .patch(updateRecord)
 
 export default router;

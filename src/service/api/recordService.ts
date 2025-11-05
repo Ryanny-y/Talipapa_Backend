@@ -62,7 +62,6 @@ export const updateRecord = async (
   id: string,
   recordDetails: UpdateRecordRequest
 ): Promise<IRecord> => {
-  if(!mongoose.Types.ObjectId.isValid(id)) throw new CustomError(400, `Product ID: ${id} is invalid.`);
 
   const existingRecord = await Record.findById(id);
   if (!existingRecord) throw new CustomError(404, `Record with ID: ${id} not found.`);
@@ -70,18 +69,19 @@ export const updateRecord = async (
   const { firstName, lastName, middleName, suffix, age, gender, isResident, address, contactNumber } = recordDetails;
 
   if (firstName && lastName) {
-      const existingRecord = await Record.findOne({
+      const duplicateRecord = await Record.findOne({
         firstName,
         lastName,
+        _id: { $ne: id }
       }).collation({ locale: 'en', strength: 2 });
-    if (existingRecord) throw new CustomError(409, `Record with name ${firstName} ${lastName} already exists.`);
+    if (duplicateRecord) throw new CustomError(409, `Record with name ${firstName} ${lastName} already exists.`);
   }
 
   if (age !== undefined) {
     if (isNaN(age) || age <= 0) throw new CustomError(400, "Age must be a positive number.");
   }
 
-  if(contactNumber?.length !== 11) throw new CustomError(400, 'Contact number must be 11 digits only.'); 
+  if(contactNumber && contactNumber?.length !== 11) throw new CustomError(400, 'Contact number must be 11 digits only.'); 
 
   const fieldsToUpdate: Record<string, any> = {};
 
