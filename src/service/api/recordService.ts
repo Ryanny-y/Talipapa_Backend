@@ -105,3 +105,10 @@ export const updateRecord = async (
 
   return updatedRecord;
 };
+
+export const deleteRecord = async (id: string): Promise<IRecord> => {
+  const deletedRecord = await Record.findByIdAndDelete(id);
+  if (!deletedRecord) throw new CustomError(404, `Record not found with ID: ${id}.`);
+  
+  return deletedRecord;
+};

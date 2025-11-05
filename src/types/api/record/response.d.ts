@@ -9,3 +9,4 @@ interface RecordResponse {
 export type PaginatedRecordResponse = PaginatedResponse<IRecord>;
 export type CreateRecordResponse = RecordResponse
 export type UpdateRecordResponse = RecordResponse
+export type DeleteRecordRespoes = { message: string }

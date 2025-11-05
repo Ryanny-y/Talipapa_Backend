@@ -1,7 +1,7 @@
 import * as recordService from '../../service/api/recordService';
 import { Request, Response } from "express";
 import { ErrorResponse, PaginationRequestQuery } from '../../types';
-import { CreateRecordResponse, PaginatedRecordResponse, UpdateRecordResponse } from '../../types/api/record/response';
+import { CreateRecordResponse, DeleteRecordRespoes, PaginatedRecordResponse, UpdateRecordResponse } from '../../types/api/record/response';
 import { handleError } from '../../utils/errorResponseHandler';
 import { CreateRecordRequest, UpdateRecordRequest } from '../../types/api/record/request';
 import { IRecord } from '../../model/Record';
@@ -45,6 +45,20 @@ export const updateRecord = async (
     }
 
     response.json(responsePayload);
+  } catch (error) {
+    handleError(error, response);
+  }
+};
+
+export const deleteRecord = async (
+  request: Request<{ id: string }>,
+  response: Response<DeleteRecordRespoes | ErrorResponse>
+) => {
+  try {
+    const { id } = request.params;
+    const deletedRecord = await recordService.deleteRecord(id);
+
+    response.json({ message: `Record ${deletedRecord.firstName} ${deletedRecord.lastName} deleted successfully!` });
   } catch (error) {
     handleError(error, response);
   }
