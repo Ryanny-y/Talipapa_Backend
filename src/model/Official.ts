@@ -29,14 +29,7 @@ const OfficialsSchema: Schema<IOfficial> = new Schema({
     size: { type: Number },
     mimetype: { type: String },
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-  },
-});
+}, { timestamps: true });
 
 const Official: Model<IOfficial> = mongoose.model<IOfficial>("Official", OfficialsSchema);
 
