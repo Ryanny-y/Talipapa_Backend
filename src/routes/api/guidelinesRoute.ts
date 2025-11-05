@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import verifyJwt from '../../middleware/verifyJwt';
 import verifyRoles from '../../middleware/verifyRoles';
 import { Roles } from '../../config/roles';
-import { createGuidelines, getPaginatedGuidelines } from '../../controller/api/guidelineController';
+import { createGuidelines, getPaginatedGuidelines, updateGuideline } from '../../controller/api/guidelineController';
 
 const router: Router = express.Router();
 
@@ -12,7 +12,7 @@ router.route("")
 
 router.route("/:id")
   .all(verifyJwt, verifyRoles(Roles.SUPER_ADMIN))
-  // .patch(upload.single("materialImage"), updateMaterial)
+  .put(updateGuideline)
   // .delete(deleteMaterial)
 
 export default router;

@@ -7,3 +7,4 @@ interface GuidelineResponse {
 
 export type PaginatedGuidelineResponse = PaginatedResponse<IGuideline>;
 export type CreateGuidelineResponse = GuidelineResponse;
+export type UpdateGuidelineResponse = GuidelineResponse;

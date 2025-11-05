@@ -1,6 +1,6 @@
 import { PaginatedResponse } from "../..";
 
-interface StepPaylod {
+export interface StepPaylod {
   stepNumber?: number;
   title: string;
   description: string;
@@ -19,3 +19,4 @@ interface GuidelinePayload {
 }
 
 export type CreateGuidelineRequest = GuidelinePayload;
+export type UpdateGuidelineRequest = GuidelinePayload;
