@@ -39,14 +39,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors(corsOptions));
 
 // Auth endpoint
-app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/auth", authRoute); 
 
 // Endpoints
 // app.use('/users', require('./routes/api/userRoute'));
 
 app.use("/api/v1/news", newsRoute);
 
-app.use("/api/v1/pagecontent", pageContentRoute);
+app.use("/api/v1/page-content", pageContentRoute);
 
 app.use("/api/v1/achievements", achievementRoute);
 

@@ -4,7 +4,6 @@ export interface IStep {
   stepNumber: number;
   title: string;
   description: string;
-  location?: string;
   requiredDocuments: string[];
   estimatedTime?: string;
   tips: string[];
@@ -36,9 +35,6 @@ const stepSchema = new Schema<IStep>(
     description: {
       type: String,
       required: true,
-    },
-    location: {
-      type: String,
     },
     requiredDocuments: {
       type: [String],
