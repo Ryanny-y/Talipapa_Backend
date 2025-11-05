@@ -112,3 +112,41 @@ export const deleteRecord = async (id: string): Promise<IRecord> => {
   
   return deletedRecord;
 };
+
+export const searchRecords = async (page: number, limit: number, query: string, residentStatus: string): Promise<PaginatedRecordResponse> => {
+  const skip = (page - 1) * limit;
+
+  const filter: any = {
+    $or: [
+      { _id: { $regex: query, $options: "i" } },
+      { firstName: { $regex: query, $options: "i" } },
+      { lastName: { $regex: query, $options: "i" } },
+      { middleName: { $regex: query, $options: "i" } },
+    ],
+  };
+
+  if (residentStatus === 'resident') filter.isResident = true;
+  else if (residentStatus === 'non-resident') filter.isResident = false;
+  else throw new CustomError(400, "Invalid Resident Status.");
+
+  const totalItems = await Record.countDocuments(filter);
+  
+  const searchResults = await Record.find(filter)
+  .sort({ createdAt: -1 })
+  .skip(skip)
+  .limit(limit)
+  .lean<IRecord[]>();
+  const totalPages = Math.ceil(totalItems / limit);
+  
+  return {
+    data: searchResults,
+    page,
+    limit,
+    totalItems,
+    totalPages,
+    hasNextPage: page * limit < totalItems,
+    hasPreviousPage: page > 1,
+    nextPage: page * limit < totalItems ? page + 1 : null,
+    prevPage: page > 1 ? page - 1 : null,
+  }
+}

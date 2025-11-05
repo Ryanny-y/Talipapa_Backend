@@ -26,14 +26,17 @@ const recordSchema = new Schema<IRecord>(
     firstName: {
       type: String,
       required: true,
+      index: true,
     },
     lastName: {
       type: String,
       required: true,
+      index: true,
     },
     middleName: {
       type: String,
       required: true,
+      index: true,
     },
     suffix: {
       type: String,

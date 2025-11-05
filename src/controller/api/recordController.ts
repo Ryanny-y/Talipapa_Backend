@@ -3,10 +3,13 @@ import { Request, Response } from "express";
 import { ErrorResponse, PaginationRequestQuery } from '../../types';
 import { CreateRecordResponse, DeleteRecordRespoes, PaginatedRecordResponse, UpdateRecordResponse } from '../../types/api/record/response';
 import { handleError } from '../../utils/errorResponseHandler';
-import { CreateRecordRequest, UpdateRecordRequest } from '../../types/api/record/request';
+import { CreateRecordRequest, SearchRecordQuery, UpdateRecordRequest } from '../../types/api/record/request';
 import { IRecord } from '../../model/Record';
 
-export const getPaginatedRecords = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedRecordResponse | ErrorResponse>) => {
+export const getPaginatedRecords = async (
+  request: Request<{}, {}, {}, PaginationRequestQuery>, 
+  response: Response<PaginatedRecordResponse | ErrorResponse>
+) => {
   try {
     const page = Number(request.query.page) || 1;
     const limit = Number(request.query.limit) || 10;
@@ -60,6 +63,21 @@ export const deleteRecord = async (
 
     response.json({ message: `Record ${deletedRecord.firstName} ${deletedRecord.lastName} deleted successfully!` });
   } catch (error) {
-    handleError(error, response);
   }
 };
+
+export const searchRecords = async (
+  request: Request<{}, {}, {}, SearchRecordQuery>, 
+  response: Response<PaginatedRecordResponse | ErrorResponse>
+) => {
+  try {
+    const page = Number(request.query.page) || 1;
+    const limit = Number(request.query.limit) || 10;
+    const { residentStatus = "resident", query = "" } = request.query;
+    const result = await recordService.searchRecords(page, limit, query, residentStatus);
+
+    response.json(result);
+  } catch (error) {
+    handleError(error, response);
+  }
+}

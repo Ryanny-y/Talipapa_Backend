@@ -12,5 +12,13 @@ interface RecordPayload {
   points?: number;
 }
 
+export interface SearchRecordQuery {
+  query?: string;
+  residentStatus?: string;
+  page?: string;
+  limit?: string;
+}
+
 export type CreateRecordRequest = RecordPayload;
 export type UpdateRecordRequest = Partial<RecordPayload>;
+
