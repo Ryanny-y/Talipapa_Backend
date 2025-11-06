@@ -1,3 +1,5 @@
+import { ILocation } from "../../model/Farm";
+
 export interface AchievementPayload {
   title: string;
   description: string;
@@ -74,4 +76,15 @@ export interface RecordPayload {
   contactNumber?: string;
   address?: string;
   points?: number;
+}
+
+export interface FarmPayload {
+  latitude: string;
+  longitude: string;
+  name: string;
+  size: string;
+  age: string;
+  farmType: string;
+  address: string;
+  description: string;
 }

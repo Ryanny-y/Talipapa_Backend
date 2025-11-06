@@ -1,12 +1,13 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { ImageInterface } from '../types';
 
-interface ILocation {
+export interface ILocation {
     lat: number;
     lng: number;
   }
 
 export interface IFarm extends Document {
+  _id: string;
   location: ILocation;
   name: string;
   size: string;

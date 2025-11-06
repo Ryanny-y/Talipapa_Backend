@@ -25,6 +25,7 @@ import materialRoute from './routes/api/materialRoute';
 import recordRoute from './routes/api/recordRoute';
 import guidelinesRoute from './routes/api/guidelinesRoute';
 import officialRoute from './routes/api/officialRoute';
+import farmRoute from './routes/api/farmRoute';
 
 const app: Application = express();
 const port = 5050;
@@ -61,7 +62,7 @@ app.use("/api/v1/guidelines", guidelinesRoute);
 
 app.use("/api/v1/officials", officialRoute);
 
-// app.use("/farms", require("./routes/api/farmRoute"));
+app.use("/api/v1/farms", farmRoute);
 
 // app.use("/logs", require("./routes/api/logsRoute"));
 

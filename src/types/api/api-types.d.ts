@@ -7,7 +7,8 @@ import {
   OfficialPayload,
   PageContentPayload,
   ProductPayload,
-  RecordPayload
+  RecordPayload,
+  FarmPayload
 } from './payloads';
 
 // Achievement
@@ -41,6 +42,10 @@ export type UpdateProductRequest = Partial<ProductPayload>;
 // Record
 export type CreateRecordRequest = RecordPayload;
 export type UpdateRecordRequest = Partial<RecordPayload>;
+
+// Farm
+export type CreateFarmRequest = FarmPayload;
+export type UpdateFarmRequest = Partial<FarmPayload>;
 
 // Generic Response Types
 export interface SuccessResponse<T> {
