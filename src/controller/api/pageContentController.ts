@@ -3,9 +3,8 @@ import { Request, Response } from "express";
 import { handleError } from "../../utils/errorResponseHandler";
 import { IPageContent } from "../../model/PageContent";
 import { ErrorResponse } from "../../types";
-import { CreatePageContentResponse, updatePageContentResponse } from "../../types/api/pageContent/response";
-import { CreatePageContentRequest, UpdatePageContentRequest } from "../../types/api/pageContent/request";
 import { MulterS3File } from "../../types/express";
+import { ApiResponse, CreatePageContentRequest, UpdatePageContentRequest } from "../../types/api/api-types";
 
 export const getPageContent = async (request: Request, response: Response<IPageContent | ErrorResponse>) => {
   try {
@@ -16,28 +15,31 @@ export const getPageContent = async (request: Request, response: Response<IPageC
   }
 }
 
-export const createPageContent = async (request: Request<{}, {}, CreatePageContentRequest>, response: Response<CreatePageContentResponse | ErrorResponse>) => {
+export const createPageContent = async (request: Request<{}, {}, CreatePageContentRequest>, response: Response<ApiResponse<IPageContent>>) => {
   try {
     const imageFile = request.file;
     const createdPageContent = await pageContentService.createPageContent(request.body, imageFile);
-    const responsePayload: CreatePageContentResponse = {
+    const responsePayload: ApiResponse<IPageContent> = {
+      success: true,
       message: `Page Content Created Successfully!`,
       data: createdPageContent
     }
+
     response.status(201).json(responsePayload);
   } catch (error) {
     handleError(error, response);
   }
 }
 
-export const updatePageContent = async (request: Request<{ id: string }, {}, UpdatePageContentRequest>, response: Response<updatePageContentResponse | ErrorResponse>) => {
+export const updatePageContent = async (request: Request<{ id: string }, {}, UpdatePageContentRequest>, response: Response<ApiResponse<IPageContent>>) => {
   try {
     const { id } = request.params;
     const imageFile = request.file;
     const updatePageContent = await pageContentService.updatePageContent(id, request.body, imageFile);
-    const responsePayload: updatePageContentResponse = {
-      message: 'Page content updated successfully',
-      data: updatePageContent 
+    const responsePayload: ApiResponse<IPageContent> = {
+      success: true,
+      message: `Page Content Updated Successfully!`,
+      data: updatePageContent
     }
 
     response.json(responsePayload)

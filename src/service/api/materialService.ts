@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 import { CustomError } from "../../error/CustomError";
 import Material, { IMaterial } from "../../model/Material";
-import { CreateMaterialRequest, MaterialRequest, UpdateMaterialRequest } from "../../types/api/material/request";
-import { PaginatedMaterialResponse } from "../../types/api/material/response";
 import { MulterS3File } from "../../types/express";
 import deleteFromS3 from "../../utils/deleteFromS3";
+import { PaginatedResponse } from "../../types";
+import { CreateMaterialRequest, UpdateMaterialRequest } from "../../types/api/api-types";
 
-export const getPaginatedMaterials = async (page: number, limit: number): Promise<PaginatedMaterialResponse> => {
+export const getPaginatedMaterials = async (page: number, limit: number): Promise<PaginatedResponse<IMaterial>> => {
   const skip = (page - 1) * limit;
 
   const totalItems = await Material.countDocuments();

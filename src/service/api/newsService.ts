@@ -1,16 +1,13 @@
 import mongoose from "mongoose";
 import { CustomError } from "../../error/CustomError";
 import News, { INews } from "../../model/News";
-import {
-  CreateNewsRequest,
-  UpdateNewsRequest,
-} from "../../types/api/news/request";
-import { PaginatedNewsResponse } from "../../types/api/news/response";
+import { CreateNewsRequest, UpdateNewsRequest } from "../../types/api/api-types";
+import { PaginatedResponse } from "../../types";
 
 export const getPaginatedNews = async (
   page: number,
   limit: number
-): Promise<PaginatedNewsResponse> => {
+): Promise<PaginatedResponse<INews>> => {
   if (page < 1 || limit < 1) {
     throw new CustomError(400, "Page and limit must be a positive integers.");
   }

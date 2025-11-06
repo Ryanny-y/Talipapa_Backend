@@ -16,7 +16,6 @@ export interface IGuideline {
   description: string;
   difficulty?: string;
   totalEstimatedTime?: string;
-  lastUpdated?: Date;
   steps: IStep[];
   createdAt: Date;
   updatedAt: Date;
@@ -67,9 +66,6 @@ const guidelineSchema = new Schema<IGuideline>(
     },
     totalEstimatedTime: {
       type: String,
-    },
-    lastUpdated: {
-      type: Date,
     },
     steps: {
       type: [stepSchema],

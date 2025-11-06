@@ -1,17 +1,16 @@
 import * as achievementService from '../../service/api/achievementService';
 import { Request, Response } from "express";
-import { ErrorResponse, PaginationRequestQuery } from '../../types';
+import { ErrorResponse, PaginatedResponse, PaginationRequestQuery } from '../../types';
 import { handleError } from '../../utils/errorResponseHandler';
-import { CreateAchievementResponse, DeleteAchievementResponse, PaginatedAchievementResponse, UpdateAchievementResponse } from '../../types/api/achievement/response';
-import { CreateAchievementRequest, UpdateAchievementRequest } from '../../types/api/achievement/request';
 import { IAchievement } from '../../model/Achievement';
 import { MulterS3File } from '../../types/express';
+import { ApiResponse, CreateAchievementRequest, UpdateAchievementRequest } from '../../types/api/api-types';
 
-export const getPaginatedAchievements = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedAchievementResponse | ErrorResponse>) => {
+export const getPaginatedAchievements = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedResponse<IAchievement> | ErrorResponse>) => {
   try {
     const page = Number(request.query.page) || 1;
     const limit = Number(request.query.limit) || 10;
-    const result: PaginatedAchievementResponse = await achievementService.getPaginatedAchievements(page, limit);
+    const result: PaginatedResponse<IAchievement> = await achievementService.getPaginatedAchievements(page, limit);
 
     response.json(result);
   } catch (error) {
@@ -19,13 +18,14 @@ export const getPaginatedAchievements = async (request: Request<{}, {}, {}, Pagi
   }
 };
 
-export const createAchievement = async (request: Request<{}, {}, CreateAchievementRequest>, response: Response<CreateAchievementResponse | ErrorResponse>) => {
+export const createAchievement = async (request: Request<{}, {}, CreateAchievementRequest>, response: Response<ApiResponse<IAchievement>>) => {
   try {
     const imageFile = request.file;
     const createdAchievement = await achievementService.createAchievement(request.body, imageFile);
-    const responsePayload: CreateAchievementResponse = {
-      message: `Achievement ${createdAchievement.title}`,
-      data: createdAchievement
+    const responsePayload: ApiResponse<IAchievement> = {
+      success: true,
+      data: createdAchievement,
+      message: `Achievement ${createdAchievement.title} created successfully!`,
     };
 
     response.status(201).json(responsePayload);
@@ -34,12 +34,13 @@ export const createAchievement = async (request: Request<{}, {}, CreateAchieveme
   }
 };
 
-export const updateAchievement = async (request: Request<{ id: string }, {}, UpdateAchievementRequest>, response: Response<UpdateAchievementResponse | ErrorResponse>) => {
+export const updateAchievement = async (request: Request<{ id: string }, {}, UpdateAchievementRequest>, response: Response<ApiResponse<IAchievement>>) => {
   try {
     const { id } = request.params;
     const imageFile = request.file;
     const updatedAchievement = await achievementService.updateAchievement(id, request.body, imageFile);
-    const responsePayload: UpdateAchievementResponse = {
+    const responsePayload: ApiResponse<IAchievement> = {
+      success: true,
       message: `Achievement Updated Successfully`,
       data: updatedAchievement
     }
@@ -49,12 +50,17 @@ export const updateAchievement = async (request: Request<{ id: string }, {}, Upd
   }
 }
 
-export const deleteAchievement = async (request: Request<{ id: string}>, response: Response<DeleteAchievementResponse | ErrorResponse>) => {
+export const deleteAchievement = async (request: Request<{ id: string}>, response: Response<ApiResponse<IAchievement>>) => {
   try {
     const { id } = request.params;
     const deletedAchievement: IAchievement = await achievementService.deleteAchievement(id);
-  
-    response.json({ message: `Achievement ${deletedAchievement.title} deleted successfully!`});
+    const responsePayload: ApiResponse<IAchievement> = {
+      success: true,
+      message: `Achievement ${deletedAchievement.title} deleted successfully!`,
+      data: deletedAchievement
+    }
+
+    response.json(responsePayload);
   } catch (error) {
     handleError(error, response);
   }

@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
 import { CustomError } from "../../error/CustomError";
 import Achievement, { IAchievement } from "../../model/Achievement";
-import { CreateAchievementRequest, UpdateAchievementRequest } from "../../types/api/achievement/request";
-import { PaginatedAchievementResponse } from "../../types/api/achievement/response";
 import { MulterS3File } from "../../types/express";
 import deleteFromS3 from "../../utils/deleteFromS3";
+import { PaginatedResponse } from "../../types";
+import { CreateAchievementRequest, UpdateAchievementRequest } from "../../types/api/api-types";
 
 export const getPaginatedAchievements = async (
   page: number,
   limit: number
-): Promise<PaginatedAchievementResponse> => {
+): Promise<PaginatedResponse<IAchievement>> => {
   if (page < 1 || limit < 1) {
     throw new CustomError(400, "Page and limit must be a positive integers.");
   }

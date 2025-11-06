@@ -3,8 +3,7 @@ import { IOfficial } from '../../model/Official';
 import * as officialService from '../../service/api/officialService';
 import { ErrorResponse } from '../../types';
 import { handleError } from "../../utils/errorResponseHandler"
-import { CreateOfficialResponse, DeleteOfficialResponse, UpdateOfficialResponse } from '../../types/api/official/response';
-import { CreateOfficialRequest, UpdateOfficiaiRequest } from '../../types/api/official/request';
+import { ApiResponse, CreateOfficialRequest, UpdateOfficialRequest } from '../../types/api/api-types';
 
 export const getAllOfficials = async (request: Request, response: Response<IOfficial[] | ErrorResponse>) => {
   try {
@@ -15,13 +14,14 @@ export const getAllOfficials = async (request: Request, response: Response<IOffi
   }
 }
 
-export const createOfficial = async (request: Request<{}, {}, CreateOfficialRequest>, response: Response<CreateOfficialResponse | ErrorResponse>) => {
+export const createOfficial = async (request: Request<{}, {}, CreateOfficialRequest>, response: Response<ApiResponse<IOfficial>>) => {
   try {
     const officialImage = request.file;
-    const createdOffial = await officialService.createOfficial(request.body, officialImage);
-    const responsePayload = {
-      message: `Official ${createdOffial.name} added successfully.`,
-      data: createdOffial
+    const createdOfficial = await officialService.createOfficial(request.body, officialImage);
+    const responsePayload: ApiResponse<IOfficial> = {
+      success: true,
+      message: `Official ${createdOfficial.name} added successfully.`,
+      data: createdOfficial
     }
 
     response.status(201).json(responsePayload);
@@ -30,14 +30,15 @@ export const createOfficial = async (request: Request<{}, {}, CreateOfficialRequ
   }
 }
 
-export const updateOfficial = async (request: Request<{ id: string }, {}, UpdateOfficiaiRequest>, response: Response<UpdateOfficialResponse | ErrorResponse>) => {
+export const updateOfficial = async (request: Request<{ id: string }, {}, UpdateOfficialRequest>, response: Response<ApiResponse<IOfficial>>) => {
   try {
     const { id } = request.params;
     const officialImage = request.file;
-    const createdOffial = await officialService.updateOfficial(id, request.body, officialImage);
-    const responsePayload = {
-      message: `Official ${createdOffial.name} updated successfully.`,
-      data: createdOffial
+    const updatedOfficial = await officialService.updateOfficial(id, request.body, officialImage);
+    const responsePayload: ApiResponse<IOfficial> = {
+      success: true,
+      message: `Official ${updatedOfficial.name} updated successfully.`,
+      data: updatedOfficial
     }
 
     response.json(responsePayload);
@@ -46,12 +47,17 @@ export const updateOfficial = async (request: Request<{ id: string }, {}, Update
   }
 }
 
-export const deleteOfficial = async (request: Request<{ id: string }>, response: Response<DeleteOfficialResponse | ErrorResponse>) => {
+export const deleteOfficial = async (request: Request<{ id: string }>, response: Response<ApiResponse<IOfficial>>) => {
   try {
     const { id } = request.params;
     const deletedOfficial: IOfficial = await officialService.deleteOfficial(id);
-    
-    response.json({ message: `Product ${deletedOfficial.name} deleted successfully!`})
+    const responsePayload: ApiResponse<IOfficial> = {
+      success: true,
+      message: `Official ${deletedOfficial.name} deleted successfully.`,
+      data: deletedOfficial
+    }
+
+    response.json(responsePayload);
   } catch (error) {
     handleError(error, response);
   }

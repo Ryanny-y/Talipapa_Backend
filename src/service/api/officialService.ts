@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import { CustomError } from "../../error/CustomError";
 import Official, { IOfficial } from "../../model/Official";
-import { CreateOfficialRequest, UpdateOfficiaiRequest } from "../../types/api/official/request";
 import { MulterS3File } from "../../types/express";
 import deleteFromS3 from "../../utils/deleteFromS3";
+import { CreateOfficialRequest, UpdateOfficialRequest } from "../../types/api/api-types";
 
 export const getAllOfficials = async (): Promise<IOfficial[]> => {
   return await Official.find().lean<IOfficial[]>();
@@ -35,7 +35,7 @@ export const createOfficial = async (officialDetails: CreateOfficialRequest, off
   return createdOffial;
 }
 
-export const updateOfficial = async (id: string, officialDetails: UpdateOfficiaiRequest, officialImage: MulterS3File | undefined): Promise<IOfficial> => {
+export const updateOfficial = async (id: string, officialDetails: UpdateOfficialRequest, officialImage: MulterS3File | undefined): Promise<IOfficial> => {
   if(!mongoose.Types.ObjectId.isValid(id)) throw new CustomError(400, `Official ID: ${id} is invalid.`);
   
   const existingOfficial = await Official.findById(id);

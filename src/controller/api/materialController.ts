@@ -1,28 +1,28 @@
 import { Request, Response } from "express";
 import * as materialService from '../../service/api/materialService'
 import { handleError } from "../../utils/errorResponseHandler"
-import { ErrorResponse, PaginationRequestQuery } from "../../types";
-import { CreateMaterialResponse, DeleteMaterialResponse, PaginatedMaterialResponse, UpdateMaterialResponse } from "../../types/api/material/response";
+import { ErrorResponse, PaginatedResponse, PaginationRequestQuery } from "../../types";
 import { IMaterial } from "../../model/Material";
-import { CreateMaterialRequest, UpdateMaterialRequest } from "../../types/api/material/request";
+import { ApiResponse, CreateMaterialRequest, UpdateMaterialRequest } from "../../types/api/api-types";
 
-export const getPaginatedMaterials = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedMaterialResponse | ErrorResponse>) => {
+export const getPaginatedMaterials = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedResponse<IMaterial> | ErrorResponse>) => {
   try {
     const page = Number(request.query.page) || 1;
     const limit = Number(request.query.limit) || 10;
 
-    const result: PaginatedMaterialResponse = await materialService.getPaginatedMaterials(page, limit);
+    const result: PaginatedResponse<IMaterial> = await materialService.getPaginatedMaterials(page, limit);
     response.json(result);
   } catch (error) {
     handleError(error, response);
   }
 }
 
-export const createMaterial = async (request: Request<{}, {}, CreateMaterialRequest>, response: Response<CreateMaterialResponse | ErrorResponse>) => {
+export const createMaterial = async (request: Request<{}, {}, CreateMaterialRequest>, response: Response<ApiResponse<IMaterial>>) => {
   try {
     const materialImage = request.file;
     const createdMaterial: IMaterial = await materialService.createMaterial(request.body, materialImage);
-    const responsePayload: CreateMaterialResponse = {
+    const responsePayload: ApiResponse<IMaterial> = {
+      success: true,
       message: `Material ${createdMaterial.name} created successfully.`,
       data: createdMaterial
     }
@@ -33,28 +33,34 @@ export const createMaterial = async (request: Request<{}, {}, CreateMaterialRequ
   }
 };
 
-export const updateMaterial = async (request: Request<{ id: string }, {}, UpdateMaterialRequest>, response: Response<UpdateMaterialResponse | ErrorResponse>) => {
+export const updateMaterial = async (request: Request<{ id: string }, {}, UpdateMaterialRequest>, response: Response<ApiResponse<IMaterial>>) => {
   try {
     const { id } = request.params;
     const materialImage = request.file;
     const updatedMaterial: IMaterial = await materialService.updateMaterial(id, request.body, materialImage);
-    const payloadResponse: UpdateMaterialResponse = {
+    const responsePayload: ApiResponse<IMaterial> = {
+      success: true,
       message: `Material ${updatedMaterial.name} updated successfully.`,
       data: updatedMaterial
-    };
+    }
 
-    response.json(payloadResponse)
+    response.json(responsePayload)
   } catch (error) {
     handleError(error, response);
   }
 }
 
-export const deleteMaterial = async (request: Request<{ id: string }>, response: Response<DeleteMaterialResponse | ErrorResponse>) => {
+export const deleteMaterial = async (request: Request<{ id: string }>, response: Response<ApiResponse<IMaterial>>) => {
   try {
     const { id } = request.params;
     const deletedProduct: IMaterial = await materialService.deleteMaterial(id);
-    
-    response.json({ message: `Material ${deletedProduct.name} deleted successfully!`})
+    const responsePayload: ApiResponse<IMaterial> = {
+      success: true,
+      message: `Material ${deletedProduct.name} deleted successfully!`,
+      data: deletedProduct  
+    }
+
+    response.json(responsePayload)
   } catch (error) {
     handleError(error, response);
   }

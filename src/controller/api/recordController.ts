@@ -1,14 +1,13 @@
 import * as recordService from '../../service/api/recordService';
 import { Request, Response } from "express";
-import { ErrorResponse, PaginationRequestQuery } from '../../types';
-import { CreateRecordResponse, DeleteRecordRespoes, PaginatedRecordResponse, UpdateRecordResponse } from '../../types/api/record/response';
+import { ErrorResponse, PaginatedResponse, SearchRecordQuery } from '../../types';
 import { handleError } from '../../utils/errorResponseHandler';
-import { CreateRecordRequest, SearchRecordQuery, UpdateRecordRequest } from '../../types/api/record/request';
 import { IRecord } from '../../model/Record';
+import { ApiResponse, CreateRecordRequest, UpdateRecordRequest } from '../../types/api/api-types';
 
 export const getPaginatedRecords = async (
   request: Request<{}, {}, {}, SearchRecordQuery>, 
-  response: Response<PaginatedRecordResponse | ErrorResponse>
+  response: Response<PaginatedResponse<IRecord> | ErrorResponse>
 ) => {
   try {
     const { residentStatus = "resident" } = request.query;
@@ -17,20 +16,22 @@ export const getPaginatedRecords = async (
 
     const result = await recordService.getPaginatedRecords(page, limit, residentStatus);
     response.json(result);
+
   } catch (error) {
     handleError(error, response);
   }
 };
 
-export const createRecord = async (request: Request<{}, {}, CreateRecordRequest>, response: Response<CreateRecordResponse | ErrorResponse>) => {
+export const createRecord = async (request: Request<{}, {}, CreateRecordRequest>, response: Response<ApiResponse<IRecord>>) => {
   try {
     const createdRecord: IRecord = await recordService.createRecord(request.body);
-    const recordPayload: CreateRecordResponse = {
+    const responsePayload: ApiResponse<IRecord> = {
+      success: true,
       message: `Record ${createdRecord.firstName} ${createdRecord.lastName} created successfully.`,
       data: createdRecord
     }
     
-    response.status(201).json(recordPayload);
+    response.status(201).json(responsePayload);
   } catch (error) {
     handleError(error, response);
   }
@@ -38,14 +39,15 @@ export const createRecord = async (request: Request<{}, {}, CreateRecordRequest>
 
 export const updateRecord = async (
   request: Request<{ id: string }, {}, UpdateRecordRequest>,
-  response: Response<UpdateRecordResponse | ErrorResponse>
+  response: Response<ApiResponse<IRecord>>
 ) => {
   try {
     const { id } = request.params;
     const updatedRecord: IRecord = await recordService.updateRecord(id, request.body);
-    const responsePayload: UpdateRecordResponse = {
+    const responsePayload: ApiResponse<IRecord> = {
+      success: true,
       message: `Record ${updatedRecord.firstName} ${updatedRecord.lastName} updated successfully.`,
-      data: updatedRecord,
+      data: updatedRecord
     }
 
     response.json(responsePayload);
@@ -56,20 +58,25 @@ export const updateRecord = async (
 
 export const deleteRecord = async (
   request: Request<{ id: string }>,
-  response: Response<DeleteRecordRespoes | ErrorResponse>
+  response: Response<ApiResponse<IRecord>>
 ) => {
   try {
     const { id } = request.params;
     const deletedRecord = await recordService.deleteRecord(id);
+    const responsePayload: ApiResponse<IRecord> = {
+      success: true,
+      message: `Record ${deletedRecord.firstName} ${deletedRecord.lastName} deleted successfully.`,
+      data: deletedRecord
+    }
 
-    response.json({ message: `Record ${deletedRecord.firstName} ${deletedRecord.lastName} deleted successfully!` });
+    response.json(responsePayload);
   } catch (error) {
   }
 };
 
 export const searchRecords = async (
   request: Request<{}, {}, {}, SearchRecordQuery>, 
-  response: Response<PaginatedRecordResponse | ErrorResponse>
+  response: Response<PaginatedResponse<IRecord> | ErrorResponse>
 ) => {
   try {
     const page = Number(request.query.page) || 1;

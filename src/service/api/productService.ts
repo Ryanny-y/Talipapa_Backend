@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 import { CustomError } from "../../error/CustomError";
 import Product, { IProduct } from "../../model/Products";
-import { CreateProductRequest, ProductPayload, UpdateProductRequest } from "../../types/api/product/request";
-import { PaginatedProductResponse } from "../../types/api/product/response";
 import { MulterS3File } from "../../types/express";
 import deleteFromS3 from "../../utils/deleteFromS3";
+import { PaginatedResponse } from "../../types";
+import { CreateProductRequest, UpdateProductRequest } from "../../types/api/api-types";
 
-export const getPaginatedProducts = async (page: number, limit: number): Promise<PaginatedProductResponse> => {
+export const getPaginatedProducts = async (page: number, limit: number): Promise<PaginatedResponse<IProduct>> => {
   const skip = (page - 1) * limit;
 
   const totalItems = await Product.countDocuments();

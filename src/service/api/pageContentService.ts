@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import { CustomError } from "../../error/CustomError";
 import PageContent from "../../model/PageContent";
 import { IPageContent } from "../../model/PageContent";
-import { CreatePageContentRequest, UpdatePageContentRequest } from "../../types/api/pageContent/request";
 import { MulterS3File } from "../../types/express";
 import deleteFromS3 from "../../utils/deleteFromS3";
+import { CreatePageContentRequest, UpdatePageContentRequest } from "../../types/api/api-types";
 
 export const getPageContent = async (): Promise<IPageContent> => {
   const result = await PageContent.findOne().lean<IPageContent>();

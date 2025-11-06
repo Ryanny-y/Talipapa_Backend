@@ -2,16 +2,15 @@ import { INews } from '../../model/News';
 import * as newsService from '../../service/api/newsService';
 import { Request, Response } from "express";
 import { handleError } from '../../utils/errorResponseHandler';
-import { ErrorResponse, PaginationRequestQuery } from '../../types';
-import { CreateNewsRequest, UpdateNewsRequest } from '../../types/api/news/request';
-import { CreateNewsResponse, DeleteNewsResponse, PaginatedNewsResponse, UpdateNewsResponse } from '../../types/api/news/response';
+import { ErrorResponse, PaginatedResponse, PaginationRequestQuery } from '../../types';
+import { ApiResponse, CreateNewsRequest, UpdateNewsRequest } from '../../types/api/api-types';
 import { CustomError } from '../../error/CustomError';
 
-export const getPaginatedNews = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedNewsResponse | ErrorResponse>) => {
+export const getPaginatedNews = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedResponse<INews> | ErrorResponse>) => {
   try {
     const page = Number(request.query.page) || 1;
     const limit = Number(request.query.limit) || 10;
-    const result: PaginatedNewsResponse = await newsService.getPaginatedNews(page, limit);
+    const result: PaginatedResponse<INews> = await newsService.getPaginatedNews(page, limit);
     
     response.json(result);
   } catch (error) {
@@ -19,10 +18,11 @@ export const getPaginatedNews = async (request: Request<{}, {}, {}, PaginationRe
   }
 }
 
-export const createNews = async (request: Request<{}, {}, CreateNewsRequest>, response: Response<CreateNewsResponse | ErrorResponse>) => {
+export const createNews = async (request: Request<{}, {}, CreateNewsRequest>, response: Response<ApiResponse<INews>>) => {
   try {
     const createdNews: INews = await newsService.createNews(request.body);
-    const responsePayload: CreateNewsResponse = {
+    const responsePayload: ApiResponse<INews> = {
+      success: true,
       message: 'News Created',
       data: createdNews
     }
@@ -33,13 +33,14 @@ export const createNews = async (request: Request<{}, {}, CreateNewsRequest>, re
   }
 }
 
-export const updateNews = async (request: Request<{ id: string }, {}, UpdateNewsRequest >, response: Response<UpdateNewsResponse | ErrorResponse>) => {
+export const updateNews = async (request: Request<{ id: string }, {}, UpdateNewsRequest >, response: Response<ApiResponse<INews>>) => {
   try {
     const { id } = request.params;
     if(!id) throw new CustomError(400, "ID is required to update news!");
 
     const updatedNews: INews = await newsService.updateNews(id, request.body);
-    const responsePayload: UpdateNewsResponse = {
+    const responsePayload: ApiResponse<INews> = {
+      success: true,
       message: `News ${updatedNews.title} Updated`,
       data: updatedNews
     }
@@ -50,12 +51,17 @@ export const updateNews = async (request: Request<{ id: string }, {}, UpdateNews
   }
 }
 
-export const deleteNews = async (request: Request<{ id: string }>, response: Response<DeleteNewsResponse | ErrorResponse>) => {
+export const deleteNews = async (request: Request<{ id: string }>, response: Response<ApiResponse<INews>>) => {
   try {
     const { id } = request.params;
     
     const deletedNews: INews = await newsService.deleteNews(id);
-    response.json({ message: `News "${deletedNews.title}" deleted successfully!`});
+    const responsePayload: ApiResponse<INews> = {
+      success: true,
+      message: `News "${deletedNews.title}" deleted successfully!`,
+      data: deletedNews
+    };
+    response.json(responsePayload);
   } catch (error) {
     handleError(error, response);
   }

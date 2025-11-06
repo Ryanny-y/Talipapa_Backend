@@ -1,10 +1,9 @@
-import mongoose from "mongoose";
 import { CustomError } from "../../error/CustomError";
 import Record, { IRecord } from "../../model/Record";
-import { CreateRecordRequest, UpdateRecordRequest } from "../../types/api/record/request";
-import { PaginatedRecordResponse } from "../../types/api/record/response";
+import { PaginatedResponse } from "../../types";
+import { CreateRecordRequest, UpdateRecordRequest } from "../../types/api/api-types";
 
-export const getPaginatedRecords = async (page: number, limit: number, residentStatus: string ): Promise<PaginatedRecordResponse> => {
+export const getPaginatedRecords = async (page: number, limit: number, residentStatus: string ): Promise<PaginatedResponse<IRecord>> => {
   const skip = (page - 1) * limit;
   const isResident = residentStatus === 'resident';
 
@@ -114,7 +113,7 @@ export const deleteRecord = async (id: string): Promise<IRecord> => {
   return deletedRecord;
 };
 
-export const searchRecords = async (page: number, limit: number, query: string, residentStatus: string): Promise<PaginatedRecordResponse> => {
+export const searchRecords = async (page: number, limit: number, query: string, residentStatus: string): Promise<PaginatedResponse<IRecord>> => {
   const skip = (page - 1) * limit;
 
   const filter: any = {

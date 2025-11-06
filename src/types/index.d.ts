@@ -1,3 +1,10 @@
+export interface SearchRecordQuery {
+  query?: string;
+  limit?: string;
+  residentStatus?: string;
+  page?: string;
+}
+
 export interface PaginationRequestQuery {
   page?: string;
   limit?: string

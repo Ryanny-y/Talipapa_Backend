@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import * as guidelineService from '../../service/api/guidelineService';
-import { ErrorResponse, PaginationRequestQuery } from "../../types";
+import { ErrorResponse, PaginatedResponse, PaginationRequestQuery } from "../../types";
 import { handleError } from "../../utils/errorResponseHandler";
-import { CreateGuidelineResponse, DeleteGuidelineResponse, PaginatedGuidelineResponse, UpdateGuidelineResponse } from "../../types/api/guideline/response";
-import { CreateGuidelineRequest, UpdateGuidelineRequest } from "../../types/api/guideline/request";
+import { IGuideline } from "../../model/Guideline";
+import { ApiResponse, CreateGuidelineRequest, UpdateGuidelineRequest } from "../../types/api/api-types";
 
-export const getPaginatedGuidelines = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedGuidelineResponse | ErrorResponse>) => {
+export const getPaginatedGuidelines = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedResponse<IGuideline> | ErrorResponse>) => {
   try {
     const page = Number(request.query.page) || 1;
     const limit = Number(request.query.limit) || 20;
@@ -17,10 +17,11 @@ export const getPaginatedGuidelines = async (request: Request<{}, {}, {}, Pagina
   }
 }
 
-export const createGuidelines = async (request: Request<{}, {}, CreateGuidelineRequest>, response: Response<CreateGuidelineResponse | ErrorResponse>) => {
+export const createGuidelines = async (request: Request<{}, {}, CreateGuidelineRequest>, response: Response<ApiResponse<IGuideline>>) => {
   try {
     const createdGuideline = await guidelineService.createGuidelines(request.body);
-    const responsePayload = {
+    const responsePayload: ApiResponse<IGuideline> = {
+      success: true,
       message: `Guideline ${createdGuideline.title} created successfully.`,
       data: createdGuideline
     }
@@ -31,12 +32,13 @@ export const createGuidelines = async (request: Request<{}, {}, CreateGuidelineR
   }
 }
 
-export const updateGuideline = async (request: Request<{ id: string }, {}, UpdateGuidelineRequest>, response: Response<UpdateGuidelineResponse | ErrorResponse>) => {
+export const updateGuideline = async (request: Request<{ id: string }, {}, UpdateGuidelineRequest>, response: Response<ApiResponse<IGuideline>>) => {
   try {
     const { id } = request.params;
     const updatedGuideline = await guidelineService.updateGuideline(id, request.body);
-    const responsePayload = {
-      message: `Guideline ${updatedGuideline.title} created successfully.`,
+    const responsePayload: ApiResponse<IGuideline> = {
+      success: true,
+      message: `Guideline ${updatedGuideline.title} updated successfully.`,
       data: updatedGuideline
     }
 
@@ -46,12 +48,17 @@ export const updateGuideline = async (request: Request<{ id: string }, {}, Updat
   }
 }
 
-export const deleteGuideline = async (request: Request<{ id: string}>, response: Response<DeleteGuidelineResponse | ErrorResponse>) => {
+export const deleteGuideline = async (request: Request<{ id: string}>, response: Response<ApiResponse<IGuideline>>) => {
   try {
     const { id } = request.params;
     const deletedAchievement = await guidelineService.deleteGuideline(id);
-  
-    response.json({ message: `Achievement ${deletedAchievement.title} deleted successfully!`});
+    const responsePayload: ApiResponse<IGuideline> = {
+      success: true,
+      message: `Guideline ${deletedAchievement.title} deleted successfully.`,
+      data: deletedAchievement
+    }
+
+    response.json(responsePayload)
   } catch (error) {
     handleError(error, response);
   }

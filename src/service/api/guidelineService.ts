@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import { CustomError } from "../../error/CustomError";
 import Guideline, { IGuideline } from "../../model/Guideline";
-import { CreateGuidelineRequest, StepPaylod, UpdateGuidelineRequest } from "../../types/api/guideline/request";
-import { PaginatedGuidelineResponse } from "../../types/api/guideline/response";
+import { PaginatedResponse } from "../../types";
+import { CreateGuidelineRequest, UpdateGuidelineRequest } from "../../types/api/api-types";
+import { StepPayload } from "../../types/api/payloads";
 
-export const getPaginatedGuidelines = async (page: number, limit: number): Promise<PaginatedGuidelineResponse> => {
+export const getPaginatedGuidelines = async (page: number, limit: number): Promise<PaginatedResponse<IGuideline>> => {
   const skip = (page - 1) * limit;
 
   const totalItems = await Guideline.countDocuments();
@@ -104,7 +105,7 @@ export const deleteGuideline = async (id: string): Promise<IGuideline> => {
   return deletedAchievement;
 }
 
-function normalizeSteps(steps: StepPaylod[]) {
+function normalizeSteps(steps: StepPayload[]) {
   return steps.map((s, idx) => ({
     stepNumber: s.stepNumber ?? idx + 1,
     title: s.title || `Step ${idx + 1}`,
