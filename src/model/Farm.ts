@@ -31,7 +31,8 @@ const farmSchema: Schema = new Schema({
   }, 
   name: {
     type: String,
-    required: true
+    required: true,
+    index: true 
   },
   size: {
     type: String,
