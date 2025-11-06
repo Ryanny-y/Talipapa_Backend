@@ -82,3 +82,16 @@ export const updateOfficial = async (id: string, officialDetails: UpdateOfficiai
   return updatedOfficial;
 
 }
+
+export const deleteOfficial = async (id: string): Promise<IOfficial> => {
+  if(!mongoose.Types.ObjectId.isValid(id)) throw new CustomError(400, `Official ID: ${id} is invalid.`);  
+
+  const deletedOfficial = await Official.findByIdAndDelete(id);
+  if(deletedOfficial?.image?.key) {
+    await deleteFromS3(deletedOfficial.image.key);
+  }
+
+  if(!deletedOfficial) throw new CustomError(404, `Official with ID: ${id} not found.`);
+
+  return deletedOfficial;
+}

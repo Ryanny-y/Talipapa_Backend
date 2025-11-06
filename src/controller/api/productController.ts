@@ -56,6 +56,7 @@ export const deleteProduct = async (request: Request<{ id: string }>, response: 
     const { id } = request.params;
     const deletedProduct: IProduct = await productService.deleteProduct(id);
     
+    
     response.json({ message: `Product ${deletedProduct.name} deleted successfully!`})
   } catch (error) {
     handleError(error, response);

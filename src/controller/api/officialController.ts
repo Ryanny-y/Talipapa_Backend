@@ -3,7 +3,7 @@ import { IOfficial } from '../../model/Official';
 import * as officialService from '../../service/api/officialService';
 import { ErrorResponse } from '../../types';
 import { handleError } from "../../utils/errorResponseHandler"
-import { CreateOfficialResponse, UpdateOfficialResponse } from '../../types/api/official/response';
+import { CreateOfficialResponse, DeleteOfficialResponse, UpdateOfficialResponse } from '../../types/api/official/response';
 import { CreateOfficialRequest, UpdateOfficiaiRequest } from '../../types/api/official/request';
 
 export const getAllOfficials = async (request: Request, response: Response<IOfficial[] | ErrorResponse>) => {
@@ -41,6 +41,17 @@ export const updateOfficial = async (request: Request<{ id: string }, {}, Update
     }
 
     response.json(responsePayload);
+  } catch (error) {
+    handleError(error, response);
+  }
+}
+
+export const deleteOfficial = async (request: Request<{ id: string }>, response: Response<DeleteOfficialResponse | ErrorResponse>) => {
+  try {
+    const { id } = request.params;
+    const deletedOfficial: IOfficial = await officialService.deleteOfficial(id);
+    
+    response.json({ message: `Product ${deletedOfficial.name} deleted successfully!`})
   } catch (error) {
     handleError(error, response);
   }
