@@ -9,7 +9,7 @@ export interface IAdmin extends Document {
   contactNumber: string;
   roles: Roles[];
   password: string;
-  refreshToken: String;
+  refreshToken: string;
   createdAt: Date;
   updatedAt: Date;
 }
