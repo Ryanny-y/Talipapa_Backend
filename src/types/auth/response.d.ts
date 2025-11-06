@@ -16,6 +16,7 @@ export interface CreateAdminResponse {
 export interface LoginAdminResponse {
   adminData: AdminResponse;
   accessToken: string;
+  refreshToken?: string;
 }
 
 export interface RefreshTokenResponse {

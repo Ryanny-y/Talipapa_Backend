@@ -3,7 +3,8 @@ import { IOfficial } from '../../model/Official';
 import * as officialService from '../../service/api/officialService';
 import { ErrorResponse } from '../../types';
 import { handleError } from "../../utils/errorResponseHandler"
-import { CreateOfficialResponse } from '../../types/api/official/response';
+import { CreateOfficialResponse, UpdateOfficialResponse } from '../../types/api/official/response';
+import { CreateOfficialRequest, UpdateOfficiaiRequest } from '../../types/api/official/request';
 
 export const getAllOfficials = async (request: Request, response: Response<IOfficial[] | ErrorResponse>) => {
   try {
@@ -14,7 +15,7 @@ export const getAllOfficials = async (request: Request, response: Response<IOffi
   }
 }
 
-export const createOfficial = async (request: Request, response: Response<CreateOfficialResponse | ErrorResponse>) => {
+export const createOfficial = async (request: Request<{}, {}, CreateOfficialRequest>, response: Response<CreateOfficialResponse | ErrorResponse>) => {
   try {
     const officialImage = request.file;
     const createdOffial = await officialService.createOfficial(request.body, officialImage);
@@ -24,6 +25,22 @@ export const createOfficial = async (request: Request, response: Response<Create
     }
 
     response.status(201).json(responsePayload);
+  } catch (error) {
+    handleError(error, response);
+  }
+}
+
+export const updateOfficial = async (request: Request<{ id: string }, {}, UpdateOfficiaiRequest>, response: Response<UpdateOfficialResponse | ErrorResponse>) => {
+  try {
+    const { id } = request.params;
+    const officialImage = request.file;
+    const createdOffial = await officialService.updateOfficial(id, request.body, officialImage);
+    const responsePayload = {
+      message: `Official ${createdOffial.name} updated successfully.`,
+      data: createdOffial
+    }
+
+    response.json(responsePayload);
   } catch (error) {
     handleError(error, response);
   }

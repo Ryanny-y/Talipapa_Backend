@@ -4,4 +4,5 @@ interface OfficialPayload {
   position: string;
 }
 
-export type CreateOfficailRequest = OfficialPayload;
+export type CreateOfficialRequest = OfficialPayload;
+export type UpdateOfficiaiRequest = Partial<OfficialPayload>;
