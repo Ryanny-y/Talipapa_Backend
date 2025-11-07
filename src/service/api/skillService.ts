@@ -24,6 +24,15 @@ export const createSkill = async (skillDetails: CreateSkillRequest): Promise<ISk
   return newSkill;
 }
 
+export const getSingleSkill = async (id: string): Promise<ISkill> => {
+  if(!mongoose.Types.ObjectId.isValid(id)) throw new CustomError(400, `Invalid skill id: ${id}`);
+
+  const skill = await Skill.findById(id);
+  if(!skill) throw new CustomError(404, `Skill with id ${id} not found.`);
+
+  return skill;
+}
+
 export const updateSkill = async (id: string, skillDetails: UpdateSkillRequest): Promise<ISkill> => {
   if(!mongoose.Types.ObjectId.isValid(id)) throw new CustomError(400, `Invalid skill id: ${id}`);
 
@@ -47,4 +56,14 @@ export const updateSkill = async (id: string, skillDetails: UpdateSkillRequest):
   if(!updatedSkill) throw new CustomError(500, `Failed to update skill with id ${id}.`);
 
   return updatedSkill;
+}
+
+
+export const deleteSkill = async (id: string): Promise<ISkill> => {
+  if(!mongoose.Types.ObjectId.isValid(id)) throw new CustomError(400, `Invalid skill id: ${id}`);
+
+  const deletedSkill = await Skill.findByIdAndDelete(id);
+  if(!deletedSkill) throw new CustomError(404, `Skill with id ${id} not found.`);
+
+  return deletedSkill;
 }
