@@ -50,3 +50,19 @@ export const updateStaff = async (request: Request<{ id: string }, {}, UpdateSta
     handleError(error, response);    
   }
 }
+
+export const deleteStaff = async (request: Request<{ id: string }>, response: Response<ApiResponse<IStaff>>) => {
+  try {
+    const { id } = request.params;
+    const deletedStaff = await staffService.deleteStaff(id);
+    const responsePayload: ApiResponse<IStaff> = {
+      success: true,
+      message: `Staff member ${deletedStaff.name} deleted successfully.`,
+      data: deletedStaff
+    }
+
+    response.json(responsePayload);
+  } catch (error) {
+    handleError(error, response);
+  }
+}

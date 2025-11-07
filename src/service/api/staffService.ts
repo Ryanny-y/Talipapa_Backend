@@ -105,3 +105,12 @@ export const updateStaff = async (staffId: string, staffDetails: UpdateStaffRequ
 
   return updatedStaff;
 }
+
+export const deleteStaff = async (staffId: string): Promise<IStaff> => {
+  if(!mongoose.isValidObjectId(staffId)) throw new CustomError(400, `Invalid staff ID: ${staffId}`);
+
+  const deletedStaff = await Staff.findByIdAndDelete(staffId).populate("skills").populate("assignedFarm", "name").lean<IStaff>();
+  if(!deletedStaff) throw new CustomError(404, `Staff member with ID ${staffId} not found.`);
+
+  return deletedStaff;
+}
