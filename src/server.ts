@@ -68,9 +68,9 @@ app.use("/api/v1/farms", farmRoute);
 
 app.use("/api/v1/skills", skillRoute);
 
-// app.use("/logs", require("./routes/api/logsRoute"));
-
 app.use("/api/v1/staff", staffRoute);
+
+// app.use("/logs", require("./routes/api/logsRoute"));
 
 // app.use("/talipapanatin", require("./routes/api/talipapanatinRoute"));
 

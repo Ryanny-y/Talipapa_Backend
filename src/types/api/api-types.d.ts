@@ -9,7 +9,8 @@ import {
   ProductPayload,
   RecordPayload,
   FarmPayload,
-  SkillPayload
+  SkillPayload,
+  StaffPayload
 } from './payloads';
 
 // Achievement
@@ -51,6 +52,10 @@ export type UpdateFarmRequest = Partial<FarmPayload>;
 // Skill
 export type CreateSkillRequest = SkillPayload;
 export type UpdateSkillRequest = Partial<SkillPayload>;
+
+// Skill
+export type AddStaffRequest = StaffPayload;
+export type UpdateStaffRequest = Partial<StaffPayload>;
 
 // Generic Response Types
 export interface SuccessResponse<T> {

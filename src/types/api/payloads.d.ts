@@ -94,3 +94,14 @@ export interface SkillPayload {
   short: string;
   type: string;
 }
+
+export interface StaffPayload {
+  name: string;
+  age: string;
+  gender: string;
+  emailAddress?: string;
+  position: string[];
+  skills: mongoose.Types.ObjectId[];
+  contactNumber?: string;
+  assignedFarm: mongoose.Types.ObjectId[];
+}
