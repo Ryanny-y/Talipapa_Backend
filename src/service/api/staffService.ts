@@ -1,7 +1,7 @@
 import mongoose, { mongo } from "mongoose";
 import Staff, { IStaff } from "../../model/Staff";
 import { CustomError } from "../../error/CustomError";
-import { AddStaffRequest } from "../../types/api/api-types";
+import { AddStaffRequest, UpdateStaffRequest } from "../../types/api/api-types";
 
 export const getStaffByFarm = async (farmId: string): Promise<IStaff[]> => {
   return await Staff.find({ farm: farmId }).populate("skills").lean<IStaff[]>();
@@ -48,4 +48,60 @@ export const addStaffToFarm = async (staffDetails: AddStaffRequest): Promise<ISt
   });
 
   return newStaff;
+}
+
+export const updateStaff = async (staffId: string, staffDetails: UpdateStaffRequest): Promise<IStaff> => {
+  if(!mongoose.isValidObjectId(staffId)) throw new CustomError(400, `Invalid staff ID: ${staffId}`);
+
+  const existingStaff = await Staff.findById(staffId);
+  if(!existingStaff) throw new CustomError(404, `Staff member with ID ${staffId} not found.`);
+
+  const { name, age, gender, emailAddress, position, skills, contactNumber, assignedFarm } = staffDetails;
+  
+  if(name && existingStaff.name !== name) {
+    const existingNameStaff = await Staff.findOne({ name, _id: { $ne: staffId } });
+    if(existingNameStaff) throw new CustomError(409, `Another staff member with name ${name} already exists.`);
+  }
+
+  if(position) {
+    if(position.length === 0) throw new CustomError(400, `Position is required and cannot be empty.`);
+    if(!Array.isArray(position)) throw new CustomError(400, `Position must be an array of strings.`);
+    if(position.includes("")) throw new CustomError(400, `Position cannot contain an empty string.`);
+  }
+  if(skills) {
+    if(skills.length === 0) throw new CustomError(400, `Skills are required and cannot be empty.`);    
+    if(!Array.isArray(skills)) throw new CustomError(400, `Skills must be an array of skill IDs.`);
+    skills.forEach(skillId => {
+      if (!mongoose.isValidObjectId(skillId)) {
+        throw new CustomError(400, `Invalid skill ID: ${skillId}`);
+      }
+    });
+  }
+  if(assignedFarm) {
+    if(assignedFarm.length === 0) throw new CustomError(400, `Assigned farm is required and cannot be empty.`);
+    if(!Array.isArray(assignedFarm)) throw new CustomError(400, `Assigned farm must be an array of farm IDs.`);
+    assignedFarm.forEach(farmId => {
+      if (!mongoose.isValidObjectId(farmId)) {
+        throw new CustomError(400, `Invalid farm ID in assigned farms: ${farmId}`);
+      }
+    });
+  }
+
+  if(contactNumber && contactNumber.length !== 11) throw new CustomError(400, `Contact number must be 11 digits long.`);
+
+  const fieldsToUpdate: Record<string, any> = {};
+
+  if(name !== undefined) fieldsToUpdate.name = name;
+  if(age !== undefined) fieldsToUpdate.age = age;
+  if(gender !== undefined) fieldsToUpdate.gender = gender;
+  if(emailAddress !== undefined) fieldsToUpdate.emailAddress = emailAddress;
+  if(position !== undefined) fieldsToUpdate.position = position;
+  if(skills !== undefined) fieldsToUpdate.skills = skills;
+  if(contactNumber !== undefined) fieldsToUpdate.contactNumber = contactNumber;
+  if(assignedFarm !== undefined) fieldsToUpdate.assignedFarm = assignedFarm;
+
+  const updatedStaff = await Staff.findByIdAndUpdate(staffId, { $set: fieldsToUpdate }, { new: true }).populate("skills").populate("assignedFarm", "name").lean<IStaff>();
+  if(!updatedStaff) throw new CustomError(500, `Failed to update staff member with ID ${staffId}.`);
+
+  return updatedStaff;
 }

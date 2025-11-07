@@ -64,6 +64,7 @@ app.use("/api/v1/guidelines", guidelinesRoute);
 
 app.use("/api/v1/officials", officialRoute);
 
+// Not implemented in FE
 app.use("/api/v1/farms", farmRoute);
 
 app.use("/api/v1/skills", skillRoute);

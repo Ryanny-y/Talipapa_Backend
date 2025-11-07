@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as staffService from '../../service/api/staffService';
 import { handleError } from "../../utils/errorResponseHandler";
-import { AddStaffRequest, ApiResponse } from "../../types/api/api-types";
+import { AddStaffRequest, ApiResponse, UpdateStaffRequest } from "../../types/api/api-types";
 import { IStaff } from "../../model/Staff";
 
 export const getStaffByFarm = async (request: Request<{ farmId: string }>, response: Response<ApiResponse<IStaff[]>>) => {
@@ -32,5 +32,21 @@ export const addStaffToFarm = async (request: Request<{}, {}, AddStaffRequest>, 
     response.status(201).json(responsePayload);
   } catch (error) {
     handleError(error, response)
+  }
+}
+
+export const updateStaff = async (request: Request<{ id: string }, {}, UpdateStaffRequest>, response: Response<ApiResponse<IStaff>>) => {
+  try {
+    const { id } = request.params;
+    const updatedStaff = await staffService.updateStaff(id, request.body);
+    const responsePayload: ApiResponse<IStaff> = {
+      success: true,
+      message: `Staff member ${updatedStaff.name} updated successfully.`,
+      data: updatedStaff
+    }
+
+    response.json(responsePayload);
+  } catch (error) {
+    handleError(error, response);    
   }
 }

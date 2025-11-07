@@ -11,8 +11,6 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallb
   }
 };
 
-console.log(process.env.AWS_BUCKET_NAME);
-
 const upload = multer({
   storage: multerS3({
     s3: s3Bucket,
