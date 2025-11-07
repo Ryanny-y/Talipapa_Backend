@@ -27,6 +27,7 @@ import guidelinesRoute from './routes/api/guidelinesRoute';
 import officialRoute from './routes/api/officialRoute';
 import farmRoute from './routes/api/farmRoute';
 import skillRoute from './routes/api/skillRoute';
+import staffRoute from './routes/api/staffRoute';
 
 const app: Application = express();
 const port = 5050;
@@ -69,7 +70,7 @@ app.use("/api/v1/skills", skillRoute);
 
 // app.use("/logs", require("./routes/api/logsRoute"));
 
-// app.use("/staff", require("./routes/api/staffRoute"));
+app.use("/api/v1/staff", staffRoute);
 
 // app.use("/talipapanatin", require("./routes/api/talipapanatinRoute"));
 

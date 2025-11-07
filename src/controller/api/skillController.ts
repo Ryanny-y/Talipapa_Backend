@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import * as skillService from '../../service/api/skillService';
-import { ErrorResponse } from '../../types';
 import { handleError } from "../../utils/errorResponseHandler"
 import { ISkill } from '../../model/Skill';
 import { ApiResponse, CreateSkillRequest, UpdateSkillRequest } from '../../types/api/api-types';
