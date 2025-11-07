@@ -26,6 +26,7 @@ import recordRoute from './routes/api/recordRoute';
 import guidelinesRoute from './routes/api/guidelinesRoute';
 import officialRoute from './routes/api/officialRoute';
 import farmRoute from './routes/api/farmRoute';
+import skillRoute from './routes/api/skillRoute';
 
 const app: Application = express();
 const port = 5050;
@@ -64,9 +65,9 @@ app.use("/api/v1/officials", officialRoute);
 
 app.use("/api/v1/farms", farmRoute);
 
-// app.use("/logs", require("./routes/api/logsRoute"));
+app.use("/api/v1/skills", skillRoute);
 
-// app.use("/skills", require("./routes/api/skillsRoute"));
+// app.use("/logs", require("./routes/api/logsRoute"));
 
 // app.use("/staff", require("./routes/api/staffRoute"));
 
