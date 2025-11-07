@@ -2,6 +2,28 @@ import mongoose, { mongo } from "mongoose";
 import Staff, { IStaff } from "../../model/Staff";
 import { CustomError } from "../../error/CustomError";
 import { AddStaffRequest, UpdateStaffRequest } from "../../types/api/api-types";
+import { PaginatedResponse } from "../../types";
+
+export const getPaginatedStaff = async (page: number, limit: number): Promise<PaginatedResponse<IStaff>> => {
+  const skip = (page - 1) * limit;
+  const totalItems = await Staff.countDocuments();
+
+  const staffs = await Staff.find().skip(skip).limit(limit).lean<IStaff[]>();
+  const totalPages = Math.ceil(totalItems / limit);
+
+
+  return {
+    page,
+    limit,
+    data: staffs,
+    totalItems,
+    totalPages,
+    hasNextPage: page < totalPages,
+    hasPreviousPage: page > 1,
+    nextPage: page < totalPages ? page + 1 : null,
+    prevPage: page > 1 ? page - 1 : null
+  };
+}
 
 export const getStaffByFarm = async (farmId: string): Promise<IStaff[]> => {
   return await Staff.find({ farm: farmId }).populate("skills").lean<IStaff[]>();

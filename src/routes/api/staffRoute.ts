@@ -2,12 +2,13 @@ import express, { Router } from 'express'
 import verifyJwt from '../../middleware/verifyJwt';
 import verifyRoles from '../../middleware/verifyRoles';
 import { Roles } from '../../config/roles';
-import { addStaffToFarm, deleteStaff, getStaffByFarm, updateStaff } from '../../controller/api/staffController';
+import { addStaffToFarm, deleteStaff, getPaginatedStaff, getStaffByFarm, updateStaff } from '../../controller/api/staffController';
 
 const router: Router = express.Router();
 
 router.route("/")
   .all(verifyJwt, verifyRoles(Roles.SUPER_ADMIN))
+  .get(getPaginatedStaff)
   .post(addStaffToFarm)
   
   router.route("/:id")

@@ -3,6 +3,19 @@ import * as staffService from '../../service/api/staffService';
 import { handleError } from "../../utils/errorResponseHandler";
 import { AddStaffRequest, ApiResponse, UpdateStaffRequest } from "../../types/api/api-types";
 import { IStaff } from "../../model/Staff";
+import { ErrorResponse, PaginatedResponse, PaginationRequestQuery } from "../../types";
+
+export const getPaginatedStaff = async (request: Request<{}, {}, {}, PaginationRequestQuery>, response: Response<PaginatedResponse<IStaff> | ErrorResponse>) => {
+  try {
+    const page = Number(request.query.page) || 1;
+    const limit = Number(request.query.limit) || 10;
+    const staffs = await staffService.getPaginatedStaff(page, limit);
+
+    response.json(staffs);
+  } catch (error) {
+    handleError(error, response);
+  }
+}
 
 export const getStaffByFarm = async (request: Request<{ farmId: string }>, response: Response<ApiResponse<IStaff[]>>) => {
   try {
