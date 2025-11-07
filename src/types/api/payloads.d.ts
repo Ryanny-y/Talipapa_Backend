@@ -88,3 +88,9 @@ export interface FarmPayload {
   address: string;
   description: string;
 }
+
+export interface SkillPayload {
+  name: string;
+  short: string;
+  type: string;
+}

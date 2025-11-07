@@ -3,6 +3,7 @@ import * as skillService from '../../service/api/skillService';
 import { ErrorResponse } from '../../types';
 import { handleError } from "../../utils/errorResponseHandler"
 import { ISkill } from '../../model/Skill';
+import { ApiResponse, CreateSkillRequest } from '../../types/api/api-types';
 
 export const getAllSkills = async (request: Request, response: Response<ISkill[] | ErrorResponse>) => {
   try {
@@ -13,21 +14,22 @@ export const getAllSkills = async (request: Request, response: Response<ISkill[]
   }
 }
 
-// export const createOfficial = async (request: Request<{}, {}, CreateOfficialRequest>, response: Response<ApiResponse<IOfficial>>) => {
-//   try {
-//     const officialImage = request.file;
-//     const createdOfficial = await skillService.createOfficial(request.body, officialImage);
-//     const responsePayload: ApiResponse<IOfficial> = {
-//       success: true,
-//       message: `Official ${createdOfficial.name} added successfully.`,
-//       data: createdOfficial
-//     }
+export const createSkill = async (request: Request<{}, {}, CreateSkillRequest>, response: Response<ApiResponse<ISkill>>) => {
+  try {
+    console.log(request.body);
+  
+    const createdOfficial = await skillService.createSkill(request.body);
+    const responsePayload: ApiResponse<ISkill> = {
+      success: true,
+      message: `Skill ${createdOfficial.name} added successfully.`,
+      data: createdOfficial
+    }
 
-//     response.status(201).json(responsePayload);
-//   } catch (error) {
-//     handleError(error, response);
-//   }
-// }
+    response.status(201).json(responsePayload);
+  } catch (error) {
+    handleError(error, response);
+  }
+}
 
 // export const updateOfficial = async (request: Request<{ id: string }, {}, UpdateOfficialRequest>, response: Response<ApiResponse<IOfficial>>) => {
 //   try {
