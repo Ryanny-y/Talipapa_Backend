@@ -48,7 +48,7 @@ const farmSchema: Schema = new Schema({
   },
   address: {
     type: String,
-    required: true
+    required: true  
   },
   description: {
     type: String,
@@ -64,6 +64,16 @@ const farmSchema: Schema = new Schema({
 }, {
   timestamps: true 
 });
+
+farmSchema.virtual('staff', {
+  ref: 'Staff',
+  localField: '_id',
+  foreignField: 'assignedFarm',
+  justOne: false,
+});
+
+farmSchema.set('toObject', { virtuals: true });
+farmSchema.set('toJSON', { virtuals: true });
 
 export const Farm = mongoose.model<IFarm>('Farm', farmSchema);
 export default Farm;

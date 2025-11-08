@@ -26,7 +26,8 @@ export const getPaginatedStaff = async (page: number, limit: number): Promise<Pa
 }
 
 export const getStaffByFarm = async (farmId: string): Promise<IStaff[]> => {
-  return await Staff.find({ farm: farmId }).populate("skills").lean<IStaff[]>();
+  if(!mongoose.Types.ObjectId.isValid(farmId)) throw new CustomError(400, `Farm ID: ${farmId} is invalid`);
+  return await Staff.find({ assignedFarm: { $in: [farmId] } }).populate("skills").lean<IStaff[]>();
 }
 
 export const addStaffToFarm = async (staffDetails: AddStaffRequest): Promise<IStaff> => {

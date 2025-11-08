@@ -6,7 +6,7 @@ import { MulterS3File } from "../../types/express";
 import deleteFromS3 from "../../utils/deleteFromS3";
 
 export const getFarm = async (): Promise<IFarm[]> => {
-  return await Farm.find().lean<IFarm[]>();
+  return await Farm.find().lean<IFarm[]>().populate('staff');
 };
 
 export const createFarm = async (farmDetails: CreateFarmRequest, farmImage: MulterS3File | undefined): Promise<IFarm> => {

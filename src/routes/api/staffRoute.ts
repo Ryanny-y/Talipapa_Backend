@@ -17,6 +17,6 @@ router.route("/")
   .patch(updateStaff)
   .delete(deleteStaff)
   
-router.get("/farm/:id", verifyJwt, verifyRoles(Roles.SUPER_ADMIN), getStaffByFarm);
+router.get("/farm/:farmId", verifyJwt, verifyRoles(Roles.SUPER_ADMIN), getStaffByFarm);
 
 export default router;
